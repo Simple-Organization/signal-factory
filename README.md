@@ -123,30 +123,46 @@ export function signal<T>(initial: T) {
 
 ### Solid
 
+Você pode usar o wrapper `solid` do `signal-factory`
+
 ```ts
+import { signal } from 'signal-factory/solid';
+
+setSignalFactory(signal);
+```
+
+Ou simplesmente copie o código do wrapper abaixo
+
+```ts
+import { createEffect, createRoot, createSignal } from 'solid-js';
+
 //
-// Solid: cria um wrapper com createRoot e createEffect
-setSignalFactory((initial) => {
-  const [value, setValue] = createSignal(initial);
+setSignalFactory(signal);
+
+//
+export function signal<T>(initial: T): Signal<T> {
+  const [value, setValue] = createSignal<T>(initial);
 
   return {
     get value() {
       return value();
     },
     set value(newValue) {
-      setValue(newValue);
+      setValue(newValue as any);
     },
 
-    subscribe(callback: (value) => void) {
-      let dispose;
+    subscribe(callback: (value: any) => void) {
+      let dispose: () => void;
       createRoot((disposer) => {
         dispose = disposer;
         createEffect(() => callback(value()));
       });
+
+      // @ts-ignore - The return type is correct.
       return dispose;
     },
   };
-});
+}
 ```
 
 ### Angular signals

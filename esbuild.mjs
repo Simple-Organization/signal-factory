@@ -21,3 +21,11 @@ await esbuild.build({
   format: 'esm',
   external: ['vue'],
 });
+
+await esbuild.build({
+  entryPoints: ['./src/wrappers/solid.ts'],
+  bundle: true,
+  outfile: 'solid/index.js',
+  format: 'esm',
+  external: ['solid-js'],
+});

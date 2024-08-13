@@ -17,6 +17,11 @@ const config = [
     output: [{ file: 'vue/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
+  {
+    input: './dist/types/src/wrappers/solid.d.ts',
+    output: [{ file: 'solid/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
 ];
 
 export default config;

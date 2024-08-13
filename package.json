@@ -21,6 +21,7 @@
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
+    "solid-js": ">=1.8",
     "typescript": "^5.5.4",
     "vue": ">=3"
   },
@@ -28,7 +29,11 @@
     "dist/index.d.ts",
     "dist/index.js",
     "vanilla/index.d.ts",
-    "vanilla/index.js"
+    "vanilla/index.js",
+    "vue/index.d.ts",
+    "vue/index.js",
+    "solid/index.d.ts",
+    "solid/index.js"
   ],
   "exports": {
     ".": {
@@ -48,6 +53,12 @@
       "default": "./vue/index.js",
       "browser": "./vue/index.js",
       "import": "./vue/index.js"
+    },
+    "./solid": {
+      "types": "./solid/index.d.ts",
+      "default": "./solid/index.js",
+      "browser": "./solid/index.js",
+      "import": "./solid/index.js"
     }
   },
   "types": "dist/index.d.ts",
