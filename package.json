@@ -25,7 +25,9 @@
   },
   "files": [
     "dist/index.d.ts",
-    "dist/index.js"
+    "dist/index.js",
+    "vanilla/index.d.ts",
+    "vanilla/index.js"
   ],
   "exports": {
     ".": {
