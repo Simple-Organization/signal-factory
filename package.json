@@ -16,12 +16,13 @@
   "bugs": "https://github.com/Simple-Organization/signal-factory/issues",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.46.0",
     "esbuild": "^0.23.0",
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
     "typescript": "^5.5.4",
-    "@playwright/test": "^1.46.0"
+    "vue": ">=3"
   },
   "files": [
     "dist/index.d.ts",
@@ -41,6 +42,12 @@
       "default": "./vanilla/index.js",
       "browser": "./vanilla/index.js",
       "import": "./vanilla/index.js"
+    },
+    "./vue": {
+      "types": "./vue/index.d.ts",
+      "default": "./vue/index.js",
+      "browser": "./vue/index.js",
+      "import": "./vue/index.js"
     }
   },
   "types": "dist/index.d.ts",

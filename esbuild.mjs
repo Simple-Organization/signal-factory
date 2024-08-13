@@ -13,3 +13,11 @@ await esbuild.build({
   outfile: 'vanilla/index.js',
   format: 'esm',
 });
+
+await esbuild.build({
+  entryPoints: ['./src/wrappers/vue.ts'],
+  bundle: true,
+  outfile: 'vue/index.js',
+  format: 'esm',
+  external: ['vue'],
+});

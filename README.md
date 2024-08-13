@@ -28,39 +28,70 @@ Possui o método `setSignalFactory` para configurar o tipo de signal que será u
 
 React não tem suporte nativo para signals, porém é possível usar [@preact/signals-react](https://www.npmjs.com/package/@preact/signals-react) e usar igual ao [Preact](#preact)
 
-### Preact
+Aí é só usar o código abaixo
 
 ```ts
-//
-// Preact Signals: mais simples de todos, de onde a api foi inspirada
+import { signal } from '@preact/signals-react';
+
+setSignalFactory(signal);
+```
+
+### Preact
+
+Adicionar para o preact com signals é muito simples, de onde a api foi inspirada
+
+```ts
+import { signal } from '@preact/signals';
+
 setSignalFactory(signal);
 ```
 
 ### Vue
 
-```ts
-//
-// Vue: adiciona o método subscribe ao ref criado com watch
-setSignalFactory((initial) => {
-  const signal = ref(initial);
+Você pode usar o wrapper usando `ref` do `signal-factory`
 
-  signal.subscribe = (cb: (newVal) => void) => {
-    cb(signal.value);
-    return watch(signal, cb);
+```ts
+import { signal } from 'signal-factory/vue';
+
+setSignalFactory(signal);
+```
+
+Ou simplesmente copie o código do wrapper abaixo
+
+```ts
+import { ref, watch } from 'vue';
+
+//
+setSignalFactory(signal);
+
+//
+export function signal<T>(initial: T): Signal<T> {
+  const _signal: any = ref(initial);
+
+  _signal.subscribe = (cb: (newVal: any) => void) => {
+    cb(_signal.value);
+    return watch(_signal, cb);
   };
 
-  return signal;
-});
+  return _signal;
+}
 ```
 
 ### Svelte e vanilla javascript
 
-Você pode usar o `signal-factory/vanilla` ou simplesmente copiar o código abaixo que é o mesmo do `signal-factory/vanilla`
+Você pode usar o wrapper `vanilla` do `signal-factory`
+
+```ts
+import { signal } from 'signal-factory/vanilla';
+
+setSignalFactory(signal);
+```
+
+Ou simplesmente copie o código do wrapper abaixo
 
 ```ts
 setSignalFactory(signal);
 
-//
 //
 
 export function signal<T>(initial: T) {
