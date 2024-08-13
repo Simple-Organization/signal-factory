@@ -6,3 +6,10 @@ await esbuild.build({
   outdir: 'dist',
   format: 'esm',
 });
+
+await esbuild.build({
+  entryPoints: ['./src/wrappers/vanilla.ts'],
+  bundle: true,
+  outfile: 'vanilla/index.js',
+  format: 'esm',
+});

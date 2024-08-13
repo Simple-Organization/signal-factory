@@ -16,6 +16,8 @@ export { setSignalFactory, signalFactory };
 
 O **signal-factory** é usado para evitar duplicar esse código entre as [storage-versioning](https://github.com/Simple-Organization/storage-versioning), [glhera-query](https://github.com/Simple-Organization/glhera-query), [glhera-router](https://github.com/Simple-Organization/glhera-router)
 
+O mais importante é entender o conceito por trás do **signal-factory** para evitar duplicar código na maior parte do tempo você pode simplesmente copiar o código do **signal-factory** e usá-lo
+
 **signal-factory** faz parte da **stack do glhera**
 
 ## Configurando reatividade (signals)
@@ -51,13 +53,17 @@ setSignalFactory((initial) => {
 });
 ```
 
-### Svelte
+### Svelte e vanilla javascript
+
+Você pode usar o `signal-factory/vanilla` ou simplesmente copiar o código abaixo que é o mesmo do `signal-factory/vanilla`
 
 ```ts
-//
-// Svelte: você pode usar o factory abaixo
+setSignalFactory(signal);
 
-const signal = <T>(initial: T) => {
+//
+//
+
+export function signal<T>(initial: T) {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 
@@ -81,10 +87,7 @@ const signal = <T>(initial: T) => {
     },
     subscribe,
   };
-};
-
-// Depois só definir setSignalFactory
-setSignalFactory(signal);
+}
 ```
 
 ### Solid

@@ -27,6 +27,20 @@
     "dist/index.d.ts",
     "dist/index.js"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js",
+      "browser": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./vanilla": {
+      "types": "./vanilla/index.d.ts",
+      "default": "./vanilla/index.js",
+      "browser": "./vanilla/index.js",
+      "import": "./vanilla/index.js"
+    }
+  },
   "types": "dist/index.d.ts",
   "type": "module",
   "packageManager": "pnpm@9.6.0"
