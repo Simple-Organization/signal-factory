@@ -14,6 +14,15 @@ function setSignalFactory(factory) {
 export { setSignalFactory, signalFactory };
 ```
 
+Tipagem de um signal
+
+```ts
+type Signal<T = any> = {
+  value: T;
+  subscribe: (callback: (value: T) => void) => () => void;
+};
+```
+
 O **signal-factory** é usado para evitar duplicar esse código entre as [storage-versioning](https://github.com/Simple-Organization/storage-versioning), [glhera-query](https://github.com/Simple-Organization/glhera-query), [glhera-router](https://github.com/Simple-Organization/glhera-router)
 
 O mais importante é entender o conceito por trás do **signal-factory** para evitar duplicar código na maior parte do tempo você pode simplesmente copiar o código do **signal-factory** e usá-lo
@@ -178,4 +187,49 @@ export function signal<T>(initial: T): Signal<T> {
 
 ### Angular signals
 
-Você não pode usar com angular signals porque não é possível se subscrever a um signal como nos outros frameworks, para se inscrever precisa do `effect` que precisa do [`injector`](https://angular.dev/guide/signals#injection-context), como `setSignalFactory` não pode acessar o `injector` acaba não sendo possível usar **Angular Signals**
+Você pode usar o wrapper `angular` do `signal-factory`
+
+```ts
+import { signal } from 'signal-factory/angular';
+
+setSignalFactory(signal);
+```
+
+Ou simplesmente copie o código do wrapper abaixo
+
+```ts
+import { signal } from '@angular/core';
+
+//
+setSignalFactory(signalWrapper);
+
+//
+export function signalWrapper<T>(initial: T): Signal<T> {
+  const _signal = signal<T>(initial);
+
+  const callbacks = new Set<(value: T) => void>();
+
+  const subscribe = (callback: (value: T) => void) => {
+    callback(_signal());
+    callbacks.add(callback);
+    return () => {
+      callbacks.delete(callback);
+    };
+  };
+
+  return {
+    get value() {
+      return _signal();
+    },
+    set value(newValue) {
+      _signal.set(newValue);
+
+      for (const callback of callbacks) {
+        callback(newValue);
+      }
+    },
+
+    subscribe,
+  };
+}
+```

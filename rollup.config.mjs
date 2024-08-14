@@ -22,6 +22,11 @@ const config = [
     output: [{ file: 'solid/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
+  {
+    input: './dist/types/src/wrappers/angular.d.ts',
+    output: [{ file: 'angular/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
 ];
 
 export default config;

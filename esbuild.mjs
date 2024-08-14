@@ -29,3 +29,11 @@ await esbuild.build({
   format: 'esm',
   external: ['solid-js'],
 });
+
+await esbuild.build({
+  entryPoints: ['./src/wrappers/angular.ts'],
+  bundle: true,
+  outfile: 'angular/index.js',
+  format: 'esm',
+  external: ['@angular/core'],
+});
