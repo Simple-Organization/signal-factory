@@ -72,6 +72,12 @@
       "browser": "./angular/index.js",
       "import": "./angular/index.js"
     },
+    "./testing": {
+      "types": "./testing/index.d.ts",
+      "default": "./testing/index.js",
+      "browser": "./testing/index.js",
+      "import": "./testing/index.js"
+    },
     "./preact": {
       "types": "./preact/index.d.ts",
       "default": "./preact/index.js",

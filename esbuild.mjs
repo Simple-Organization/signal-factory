@@ -7,6 +7,10 @@ await esbuild.build({
   format: 'esm',
 });
 
+//
+//  Wrappers
+//
+
 await esbuild.build({
   entryPoints: ['./src/wrappers/vanilla-atom.ts'],
   bundle: true,
@@ -37,6 +41,17 @@ await esbuild.build({
   format: 'esm',
   external: ['@angular/core'],
 });
+
+await esbuild.build({
+  entryPoints: ['./src/wrappers/testing.ts'],
+  bundle: true,
+  outfile: 'testing/index.js',
+  format: 'esm',
+});
+
+//
+//  Hooks
+//
 
 await esbuild.build({
   entryPoints: ['./src/hooks/preact.ts'],

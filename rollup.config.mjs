@@ -7,6 +7,11 @@ const config = [
     output: [{ file: 'dist/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
+
+  //
+  //  Wrappers
+  //
+
   {
     input: './dist/types/src/wrappers/vanilla-atom.d.ts',
     output: [{ file: 'vanilla-atom/index.d.ts', format: 'es' }],
@@ -27,6 +32,16 @@ const config = [
     output: [{ file: 'angular/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
+  {
+    input: './dist/types/src/wrappers/testing.d.ts',
+    output: [{ file: 'testing/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
+
+  //
+  //  Hooks
+  //
+
   {
     input: './dist/types/src/hooks/preact.d.ts',
     output: [{ file: 'preact/index.d.ts', format: 'es' }],

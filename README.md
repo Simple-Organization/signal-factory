@@ -255,3 +255,22 @@ export function signalWrapper<T>(initial: T): Signal<T> {
   };
 }
 ```
+
+## Testing
+
+A api prove um `wrapper` para poder vizualizar o número de subscrições e o histórico de valores de um signal/atom
+
+```ts
+import { testWrapper } from 'signal-factory/testing';
+import { atom } from 'signal-factory/vanilla-atom';
+
+const wrapped = testWrapper(atom(1));
+
+wrapped.value = 2;
+
+wrapped.history; // [1, 2]
+
+wrapped.subscribe((value) => console.log(value));
+
+wrapped.lisCount; // 1
+```
