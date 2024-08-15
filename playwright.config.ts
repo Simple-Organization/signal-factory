@@ -19,7 +19,7 @@ export default defineConfig({
   projects: [
     {
       name: 'node',
-      testMatch: /.*\.test\.ts/,
+      testMatch: /.*\.test\.tsx?/,
       use: {
         launchOptions: {
           headless: true,

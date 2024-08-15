@@ -32,15 +32,26 @@ export function atom<T>(initial: T): Signal<T> {
 //
 //
 
-export function selector<E, T extends Signal<E>, U>(
+/** One or more values from `Signal` stores. */
+type SignalValue<T> =
+  T extends Signal<infer U>
+    ? U
+    : { [K in keyof T]: T[K] extends Signal<infer U> ? U : never };
+
+//
+
+export function selector<T extends Signal<any>, U>(
   from: T,
-  getter: (value: E) => U,
+  getter: (value: SignalValue<T>) => U,
 ): Signal<U>;
 
-export function selector<E, T extends Readonly<[...Signal<E>[]]>, U>(
-  from: T,
-  getter: (values: E[]) => U,
-): Signal<U>;
+//
+
+export function selector<
+  E extends Signal<any>,
+  T extends Readonly<[E, ...E[]]>,
+  U,
+>(from: T, getter: (values: SignalValue<E>) => U): Signal<U>;
 
 //
 //
