@@ -16,9 +16,10 @@
   "bugs": "https://github.com/Simple-Organization/signal-factory/issues",
   "license": "MIT",
   "devDependencies": {
-    "@angular/core": "^18.1.4",
+    "@angular/core": ">=16",
     "@playwright/test": "^1.46.0",
     "esbuild": "^0.23.0",
+    "preact": ">=10",
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
@@ -36,7 +37,9 @@
     "solid/index.d.ts",
     "solid/index.js",
     "angular/index.d.ts",
-    "angular/index.js"
+    "angular/index.js",
+    "preact/index.d.ts",
+    "preact/index.js"
   ],
   "exports": {
     ".": {
@@ -68,6 +71,12 @@
       "default": "./angular/index.js",
       "browser": "./angular/index.js",
       "import": "./angular/index.js"
+    },
+    "./preact": {
+      "types": "./preact/index.d.ts",
+      "default": "./preact/index.js",
+      "browser": "./preact/index.js",
+      "import": "./preact/index.js"
     }
   },
   "types": "dist/index.d.ts",

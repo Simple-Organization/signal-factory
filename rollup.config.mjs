@@ -27,6 +27,11 @@ const config = [
     output: [{ file: 'angular/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
+  {
+    input: './dist/types/src/hooks/preact.d.ts',
+    output: [{ file: 'preact/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
 ];
 
 export default config;

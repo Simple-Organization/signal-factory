@@ -55,6 +55,28 @@ import { signal } from '@preact/signals';
 setSignalFactory(signal);
 ```
 
+Você pode usar também o hook do `signal-factory/preact` e ao invés de usar o `@preact/signals` você pode usar o `signal-factory/vanilla-atom` para criar os signals
+
+A vantagem dessa abordagem é que ela é explícita do que atom está sendo subscrito comparado `@preact/signals`, e ele também não modifica o `render` interno do preact, podendo salvar performance em algumas circunstancias
+
+```tsx
+import { atom } from 'signal-factory/vanilla-atom';
+import { useSubSignals } from 'signal-factory/preact';
+
+setSignalFactory(atom);
+
+//
+// Depois
+
+const counter = atom(1);
+
+export function Component() {
+  useSubSignals(() => [someAtom]);
+
+  return <button onClick={() => counter.value++}>Count {counter.value}</button>;
+}
+```
+
 ### Vue
 
 Você pode usar o wrapper usando `ref` do `signal-factory`

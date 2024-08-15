@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@angular/core':
-        specifier: ^18.1.4
+        specifier: '>=16'
         version: 18.1.4(rxjs@7.8.1)(zone.js@0.14.10)
       '@playwright/test':
         specifier: ^1.46.0
@@ -17,6 +17,9 @@ importers:
       esbuild:
         specifier: ^0.23.0
         version: 0.23.0
+      preact:
+        specifier: '>=10'
+        version: 10.23.2
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -409,6 +412,9 @@ packages:
     resolution: {integrity: sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==}
     engines: {node: ^10 || ^12 || >=14}
 
+  preact@10.23.2:
+    resolution: {integrity: sha512-kKYfePf9rzKnxOAKDpsWhg/ysrHPqT+yQ7UW4JjdnqjFIeNUnNcEJvhuA8fDenxAGWzUqtd51DfVg7xp/8T9NA==}
+
   prettier@3.3.3:
     resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
     engines: {node: '>=14'}
@@ -780,6 +786,8 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.1
       source-map-js: 1.2.0
+
+  preact@10.23.2: {}
 
   prettier@3.3.3: {}
 

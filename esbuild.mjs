@@ -37,3 +37,11 @@ await esbuild.build({
   format: 'esm',
   external: ['@angular/core'],
 });
+
+await esbuild.build({
+  entryPoints: ['./src/hooks/preact.ts'],
+  bundle: true,
+  outfile: 'preact/index.js',
+  format: 'esm',
+  external: ['preact/hooks'],
+});
