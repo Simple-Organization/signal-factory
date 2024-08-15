@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setSignalFactory, signalFactory } from '../src';
-import { atom as vanillaSignal } from '../src/wrappers/vanilla-atom';
+import { atom, selector } from '../src/wrappers/vanilla-atom';
 import { signal as vueSignal } from '../src/wrappers/vue';
 import { signal as solidSignal } from '../src/wrappers/solid';
 import { signalWrapper as angularSignal } from '../src/wrappers/angular';
@@ -45,8 +45,8 @@ test('Must set the signal', () => {
 //
 //
 
-test('Vanilla signal factory', () => {
-  const signal = vanillaSignal('hello');
+test('Vanilla atom factory', () => {
+  const signal = atom('hello');
 
   const values: string[] = [];
 
@@ -61,6 +61,55 @@ test('Vanilla signal factory', () => {
   signal.value = 'unsubscribed';
 
   expect(values).toEqual(['hello', 'world']);
+});
+
+//
+//
+
+test('Vanilla selector', () => {
+  const signal1 = atom('hello');
+  const signal2 = atom(2);
+  const _selector = selector(
+    [signal1, signal2],
+    ([value1, value2]) => value1 + value2,
+  );
+
+  const values: string[] = [];
+
+  const unsubscribe = _selector.subscribe((value) => {
+    values.push(value);
+  });
+
+  signal1.value = 'world';
+  signal2.value = 3;
+
+  unsubscribe();
+
+  signal1.value = 'unsubscribed';
+
+  expect(values).toEqual(['hello2', 'world2', 'world3']);
+});
+
+//
+//
+
+test('Vanilla selector single from', () => {
+  const signal = atom('hello');
+  const _selector = selector(signal, (value) => value + 1);
+
+  const values: string[] = [];
+
+  const unsubscribe = _selector.subscribe((value) => {
+    values.push(value);
+  });
+
+  signal.value = 'world';
+
+  unsubscribe();
+
+  signal.value = 'unsubscribed';
+
+  expect(values).toEqual(['hello1', 'world1']);
 });
 
 //
@@ -133,7 +182,6 @@ test('solid signal factory', async () => {
   expect(values).toEqual(['hello', 'world']);
 });
 
-
 //
 //
 
@@ -179,7 +227,6 @@ test('angular signal factory', async () => {
 
   expect(values).toEqual(['hello', 'world']);
 });
-
 
 //
 //
