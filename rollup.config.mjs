@@ -8,8 +8,8 @@ const config = [
     plugins: [dts()],
   },
   {
-    input: './dist/types/src/wrappers/vanilla.d.ts',
-    output: [{ file: 'vanilla/index.d.ts', format: 'es' }],
+    input: './dist/types/src/wrappers/vanilla-atom.d.ts',
+    output: [{ file: 'vanilla-atom/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
   {

@@ -3,7 +3,7 @@ import { Signal } from '..';
 //
 //
 
-export function signal<T>(initial: T): Signal<T> {
+export function atom<T>(initial: T): Signal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 

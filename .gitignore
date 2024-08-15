@@ -1,7 +1,7 @@
 node_modules
 dist
 *.tgz
-vanilla/*
+vanilla-atom/*
 vue/*
 solid/*
 angular/*

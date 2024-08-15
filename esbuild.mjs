@@ -8,9 +8,9 @@ await esbuild.build({
 });
 
 await esbuild.build({
-  entryPoints: ['./src/wrappers/vanilla.ts'],
+  entryPoints: ['./src/wrappers/vanilla-atom.ts'],
   bundle: true,
-  outfile: 'vanilla/index.js',
+  outfile: 'vanilla-atom/index.js',
   format: 'esm',
 });
 

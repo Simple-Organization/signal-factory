@@ -88,22 +88,22 @@ export function signal<T>(initial: T): Signal<T> {
 
 ### Svelte e vanilla javascript
 
-Você pode usar o wrapper `vanilla` do `signal-factory`
+Você pode usar o wrapper `vanilla-atom` do `signal-factory`
 
 ```ts
-import { signal } from 'signal-factory/vanilla';
+import { atom } from 'signal-factory/vanilla-atom';
 
-setSignalFactory(signal);
+setSignalFactory(atom);
 ```
 
 Ou simplesmente copie o código do wrapper abaixo
 
 ```ts
-setSignalFactory(signal);
+setSignalFactory(atom);
 
 //
 
-export function signal<T>(initial: T) {
+export function atom<T>(initial: T) {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 

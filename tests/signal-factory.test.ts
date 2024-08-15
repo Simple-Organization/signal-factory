@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setSignalFactory, signalFactory } from '../src';
-import { signal as vanillaSignal } from '../src/wrappers/vanilla';
+import { atom as vanillaSignal } from '../src/wrappers/vanilla-atom';
 import { signal as vueSignal } from '../src/wrappers/vue';
 import { signal as solidSignal } from '../src/wrappers/solid';
 import { signalWrapper as angularSignal } from '../src/wrappers/angular';
