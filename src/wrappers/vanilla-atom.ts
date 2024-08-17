@@ -3,14 +3,7 @@ import { Signal } from '..';
 //
 //
 
-function isEqual(a: any, b: any): boolean {
-  return Object.is(a, b);
-}
-
-//
-//
-
-export function atom<T>(initial: T, comparison = isEqual): Signal<T> {
+export function atom<T>(initial: T, is = Object.is): Signal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 
@@ -27,7 +20,7 @@ export function atom<T>(initial: T, comparison = isEqual): Signal<T> {
       return value;
     },
     set value(newValue) {
-      if (comparison(value, newValue)) {
+      if (is(value, newValue)) {
         return;
       }
 
