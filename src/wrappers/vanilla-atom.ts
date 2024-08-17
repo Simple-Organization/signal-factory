@@ -3,7 +3,14 @@ import { Signal } from '..';
 //
 //
 
-export function atom<T>(initial: T): Signal<T> {
+function isEqual(a: any, b: any): boolean {
+  return Object.is(a, b);
+}
+
+//
+//
+
+export function atom<T>(initial: T, comparison = isEqual): Signal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 
@@ -20,6 +27,10 @@ export function atom<T>(initial: T): Signal<T> {
       return value;
     },
     set value(newValue) {
+      if (comparison(value, newValue)) {
+        return;
+      }
+
       value = newValue;
       for (const callback of callbacks) {
         callback(value);
@@ -60,54 +71,39 @@ export function selector(
   from: Signal<any> | Signal<any>[],
   getter: (values: any) => any,
 ): Signal<any> {
+  return Array.isArray(from)
+    ? multiSelector(from as any, getter)
+    : singleSelector(from, getter);
+}
+
+//
+//
+
+function singleSelector<T extends Signal<any>, U>(
+  from: T,
+  getter: (value: SignalValue<T>) => U,
+): Signal<U> {
+  let value = getter(from.value);
+  let unsubscribe: (() => void) | undefined;
+
+  //
+
   const callbacks = new Set<(value: any) => void>();
 
   //
   //
 
-  const isArray = Array.isArray(from);
-
-  function getValue(): any {
-    if (isArray) {
-      values = (from as Signal<any>[]).map((signal) => signal.value);
-      return getter(values);
-    } else {
-      return getter((from as Signal<any>).value);
-    }
-  }
-
-  //
-  //
-
-  let values: any[];
-  let value = getValue();
-  let unsubscribes: (() => void)[] | (() => void) | undefined;
-
-  //
-  //
-
-  const subscribe = (callback: (value: any) => void) => {
-    if (!unsubscribes) {
+  function subscribe(callback: (value: any) => void) {
+    if (!unsubscribe) {
       let firstSubscribe = true;
 
-      if (isArray) {
-        unsubscribes = (from as Signal<any>[]).map((signal, i) =>
-          signal.subscribe((value) => {
-            values[i] = value;
-            value = getter(values);
-            if (!firstSubscribe) {
-              callback(value);
-            }
-          }),
-        );
-      } else {
-        unsubscribes = (from as Signal<any>).subscribe((value) => {
-          value = getter(value);
-          if (!firstSubscribe) {
-            callback(value);
-          }
-        });
-      }
+      unsubscribe = from.subscribe((value) => {
+        value = getter(value);
+
+        if (!firstSubscribe) {
+          callback(value);
+        }
+      });
 
       firstSubscribe = false;
     }
@@ -118,17 +114,89 @@ export function selector(
       callbacks.delete(callback);
 
       if (callbacks.size === 0) {
-        if (isArray) {
-          for (const unsubscribe of unsubscribes as (() => void)[]) {
-            unsubscribe();
+        unsubscribe!();
+        unsubscribe = undefined;
+      }
+    };
+  }
+
+  //
+  //
+
+  return {
+    get value() {
+      if (callbacks.size === 0) {
+        return getter(from.value);
+      }
+      return value;
+    },
+    set value(newValue) {
+      value = newValue;
+      for (const callback of callbacks) {
+        callback(value);
+      }
+    },
+    subscribe,
+  };
+}
+
+//
+//
+
+function multiSelector<
+  E extends Signal<any>,
+  T extends Readonly<[E, ...E[]]>,
+  U,
+>(from: T, getter: (values: SignalValue<E>) => U): Signal<U> {
+  let values: any[];
+  let value = getValue();
+  let unsubscribes: (() => void)[] | undefined;
+
+  //
+
+  const callbacks = new Set<(value: any) => void>();
+
+  //
+
+  function getValue(): any {
+    values = from.map((signal) => signal.value);
+    return getter(values as any);
+  }
+
+  //
+  //
+
+  function subscribe(callback: (value: any) => void) {
+    if (!unsubscribes) {
+      let firstSubscribe = true;
+
+      unsubscribes = from.map((signal, i) =>
+        signal.subscribe((value) => {
+          values[i] = value;
+          value = getter(values as any);
+
+          if (!firstSubscribe) {
+            callback(value);
           }
-        } else {
-          (unsubscribes as () => void)();
+        }),
+      );
+
+      firstSubscribe = false;
+    }
+
+    callback(value);
+    callbacks.add(callback);
+    return () => {
+      callbacks.delete(callback);
+
+      if (callbacks.size === 0) {
+        for (const unsubscribe of unsubscribes!) {
+          unsubscribe();
         }
         unsubscribes = undefined;
       }
     };
-  };
+  }
 
   //
   //

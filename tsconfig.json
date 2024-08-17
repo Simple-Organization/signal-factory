@@ -11,7 +11,10 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "jsxImportSource": "preact",
+    "jsx": "react-jsx",
+    "types": ["preact"]
   },
   "include": ["src", "tests"]
 }
