@@ -178,6 +178,28 @@ atoms.forEach(({ name, atom, selector }) => {
 
       expect(values).toEqual(['hello1', 'world1']);
     });
+
+    //
+    //
+
+    test('The single selector must subscribe lazily', () => {
+      const signal = atom('hello');
+
+      let count = 0;
+
+      const _selector = selector(signal, (value) => {
+        count++;
+        return value + 1;
+      });
+
+      expect(count).toBe(0);
+
+      const unsubscribe = _selector.subscribe(() => {});
+
+      expect(count).toBe(1);
+
+      unsubscribe();
+    });
   });
 
   //
@@ -294,7 +316,7 @@ atoms.forEach(({ name, atom, selector }) => {
     //
     //
 
-    test('The vanilla atom must subscribe lazily', () => {
+    test('The multi selector must subscribe lazily', () => {
       const signal1 = atom('hello');
       const signal2 = atom(2);
 

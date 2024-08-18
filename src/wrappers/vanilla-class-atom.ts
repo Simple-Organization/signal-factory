@@ -45,7 +45,7 @@ export class Atom<T> implements Signal<T> {
 
 export class SingleSelector<T> implements Signal<T> {
   /** @internal */
-  protected _v: T;
+  protected _v!: T;
   /** @internal */
   protected _cbs = new Set<(value: T) => void>();
   /** @internal */
@@ -54,36 +54,42 @@ export class SingleSelector<T> implements Signal<T> {
   protected _from: Signal<any>;
   /** @internal */
   protected _getter: (value: T) => T;
+  /** @internal */
+  protected _hasValue = false;
 
   constructor(
-    _from: Signal<T>,
-    _getter: (value: T) => T,
+    from: Signal<T>,
+    getter: (value: T) => T,
     readonly is: typeof Object.is,
   ) {
-    this._from = _from;
-    this._getter = _getter;
-    this._v = _getter(_from.value);
+    this._from = from;
+    this._getter = getter;
   }
 
   get value() {
     if (this._cbs.size === 0) {
       return this._getter(this._from.value);
+    } else if (!this._hasValue) {
+      this._v = this._getter(this._from.value);
+      this._hasValue = true;
     }
     return this._v;
   }
 
-  set value(newValue) {
-    this._v = newValue;
-    for (const callback of this._cbs) {
-      callback(this._v);
-    }
-  }
-
   subscribe(callback: (value: T) => void) {
+    if (!this._hasValue) {
+      this._v = this._getter(this._from.value);
+      this._hasValue = true;
+    }
+
     if (!this._unsub) {
       let firstSubscribe = true;
 
       this._unsub = this._from.subscribe((fromValue) => {
+        if (firstSubscribe) {
+          return;
+        }
+
         const newValue = this._getter(fromValue);
 
         if (this.is(newValue, this._v)) {
@@ -92,9 +98,7 @@ export class SingleSelector<T> implements Signal<T> {
 
         this._v = newValue;
 
-        if (!firstSubscribe) {
-          callback(newValue);
-        }
+        callback(newValue);
       });
 
       firstSubscribe = false;
@@ -146,13 +150,6 @@ export class MultiSelector<T> implements Signal<T> {
       return this._getValue();
     }
     return this._v;
-  }
-
-  set value(newValue) {
-    this._v = newValue;
-    for (const callback of this._cbs) {
-      callback(this._v);
-    }
   }
 
   /** @internal */

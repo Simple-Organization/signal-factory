@@ -83,8 +83,9 @@ function singleSelector<T extends Signal<any>, U>(
   getter: (value: SignalValue<T>) => U,
   is: typeof Object.is,
 ): Signal<U> {
-  let value = getter(from.value);
+  let value!: any;
   let unsubscribe: (() => void) | undefined;
+  let hasValue = false;
 
   //
 
@@ -94,10 +95,19 @@ function singleSelector<T extends Signal<any>, U>(
   //
 
   function subscribe(callback: (value: any) => void) {
+    if (!hasValue) {
+      value = getter(from.value);
+      hasValue = true;
+    }
+
     if (!unsubscribe) {
       let firstSubscribe = true;
 
       unsubscribe = from.subscribe((fromValue) => {
+        if (firstSubscribe) {
+          return;
+        }
+
         const newValue = getter(fromValue);
 
         if (is(newValue, value)) {
@@ -105,10 +115,7 @@ function singleSelector<T extends Signal<any>, U>(
         }
 
         value = newValue;
-
-        if (!firstSubscribe) {
-          callback(value);
-        }
+        callback(value);
       });
 
       firstSubscribe = false;
@@ -133,14 +140,11 @@ function singleSelector<T extends Signal<any>, U>(
     get value() {
       if (callbacks.size === 0) {
         return getter(from.value);
+      } else if (!hasValue) {
+        value = getter(from.value);
+        hasValue = true;
       }
       return value;
-    },
-    set value(newValue) {
-      value = newValue;
-      for (const callback of callbacks) {
-        callback(value);
-      }
     },
     subscribe,
   };
@@ -232,12 +236,6 @@ function multiSelector<
         return getValue();
       }
       return value;
-    },
-    set value(newValue) {
-      value = newValue;
-      for (const callback of callbacks) {
-        callback(value);
-      }
     },
     subscribe,
   };
