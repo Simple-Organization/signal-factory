@@ -159,8 +159,9 @@ function multiSelector<
   is: typeof Object.is,
 ): Signal<U> {
   let values: any[];
-  let value = getValue();
+  let value!: any;
   let unsubscribes: (() => void)[] | undefined;
+  let hasValue = false;
 
   //
 
@@ -170,6 +171,10 @@ function multiSelector<
 
   function getValue(): any {
     values = from.map((signal) => signal.value);
+    if (!hasValue) {
+      hasValue = true;
+    }
+
     return getter(values as any);
   }
 
@@ -177,14 +182,16 @@ function multiSelector<
   //
 
   function subscribe(callback: (value: any) => void) {
+    if (!hasValue) {
+      value = getValue();
+    }
+
     if (!unsubscribes) {
       let firstSubscribe = true;
 
       unsubscribes = from.map((signal, i) =>
         signal.subscribe((signalValue) => {
           if (firstSubscribe) {
-            values[i] = signalValue;
-            value = getter(values as any);
             return;
           }
 
@@ -221,7 +228,7 @@ function multiSelector<
 
   return {
     get value() {
-      if (callbacks.size === 0) {
+      if (callbacks.size === 0 || !hasValue) {
         return getValue();
       }
       return value;

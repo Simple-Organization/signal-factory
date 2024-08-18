@@ -290,5 +290,28 @@ atoms.forEach(({ name, atom, selector }) => {
 
       expect(values).toEqual(['hello2', 'world2', 'world3']);
     });
+
+    //
+    //
+
+    test('The vanilla atom must subscribe lazily', () => {
+      const signal1 = atom('hello');
+      const signal2 = atom(2);
+
+      let count = 0;
+
+      const _selector = selector([signal1, signal2], ([value1, value2]) => {
+        count++;
+        return value1 + value2;
+      });
+
+      expect(count).toBe(0);
+
+      const unsubscribe = _selector.subscribe(() => {});
+
+      expect(count).toBe(1);
+
+      unsubscribe();
+    });
   });
 });
