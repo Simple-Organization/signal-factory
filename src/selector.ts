@@ -117,5 +117,8 @@ export function selector<T>(
       return internal.value;
     },
     subscribe,
+    get count() {
+      return numSubscribers;
+    },
   };
 }

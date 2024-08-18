@@ -5,6 +5,7 @@ import {
   selector as classSelector,
 } from '../src/wrappers/vanilla-class-atom';
 import { selector as multiSelector } from '../src/selector';
+import { Selector as MultiClassSelector } from '../src/selector-class';
 import { setSignalFactory } from '../src';
 
 //
@@ -17,7 +18,9 @@ const atoms = [
     // @ts-ignore
     atom: ((...args: any[]) => new Atom(...args)) as typeof atom,
     singleSelector: classSelector,
-    multiSelector: (() => {}) as any as typeof multiSelector,
+    multiSelector: ((...args: any[]) =>
+      // @ts-ignore
+      new MultiClassSelector(...args)) as typeof multiSelector,
   },
 ];
 
@@ -215,8 +218,6 @@ atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
     //
 
     test('multi selector must be created and unsubscribed normally', () => {
-      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
-
       const signal1 = atom('hello');
       const signal2 = atom(2);
       const _selector = multiSelector((get) => get(signal1) + get(signal2));
@@ -241,8 +242,6 @@ atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
     //
 
     test('If the atom have its value updated, but no one as subscribed to the multi selector, it must keep sync', () => {
-      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
-
       const signal1 = atom('hello');
       const signal2 = atom(2);
       const _selector = multiSelector((get) => get(signal1) + get(signal2));
@@ -258,8 +257,6 @@ atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
     //
 
     test('If the same value is given to vanilla multi selector factory, it must not reupdate', () => {
-      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
-      
       const signal1 = atom('hello');
       const signal2 = atom(2);
       const _selector = multiSelector((get) => get(signal1) + get(signal2));
@@ -288,8 +285,6 @@ atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
     //
 
     test('If the atom reupdate the multi selector should not reupdate', () => {
-      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
-
       const signal1 = atom('hello', () => false);
       const signal2 = atom(2, () => false);
       const _selector = multiSelector((get) => get(signal1) + get(signal2));
@@ -318,8 +313,6 @@ atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
     //
 
     test('The multi selector must subscribe lazily', () => {
-      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
-
       const signal1 = atom('hello');
       const signal2 = atom(2);
 
