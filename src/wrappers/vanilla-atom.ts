@@ -1,4 +1,5 @@
 import { Signal } from '..';
+import { oldSelector } from '../../tests/old-selectors/old-vanilla-atom-multi-selector';
 
 //
 //
@@ -71,7 +72,7 @@ export function selector(
   is = Object.is,
 ): Signal<any> {
   return Array.isArray(from)
-    ? multiSelector(from as any, getter, is)
+    ? oldSelector(from as any, getter, is)
     : singleSelector(from, getter, is);
 }
 
@@ -143,97 +144,6 @@ function singleSelector<T extends Signal<any>, U>(
       } else if (!hasValue) {
         value = getter(from.value);
         hasValue = true;
-      }
-      return value;
-    },
-    subscribe,
-  };
-}
-
-//
-//
-
-function multiSelector<
-  E extends Signal<any>,
-  T extends Readonly<[E, ...E[]]>,
-  U,
->(
-  from: T,
-  getter: (values: SignalValue<E>) => U,
-  is: typeof Object.is,
-): Signal<U> {
-  let values: any[];
-  let value!: any;
-  let unsubscribes: (() => void)[] | undefined;
-  let hasValue = false;
-
-  //
-
-  const callbacks = new Set<(value: any) => void>();
-
-  //
-
-  function getValue(): any {
-    values = from.map((signal) => signal.value);
-    if (!hasValue) {
-      hasValue = true;
-    }
-
-    return getter(values as any);
-  }
-
-  //
-  //
-
-  function subscribe(callback: (value: any) => void) {
-    if (!hasValue) {
-      value = getValue();
-    }
-
-    if (!unsubscribes) {
-      let firstSubscribe = true;
-
-      unsubscribes = from.map((signal, i) =>
-        signal.subscribe((signalValue) => {
-          if (firstSubscribe) {
-            return;
-          }
-
-          if (is(signalValue, values[i])) {
-            return;
-          }
-
-          values[i] = signalValue;
-          value = getter(values as any);
-
-          callback(value);
-        }),
-      );
-
-      firstSubscribe = false;
-    }
-
-    callback(value);
-    callbacks.add(callback);
-    return () => {
-      callbacks.delete(callback);
-
-      if (callbacks.size === 0) {
-        for (const unsubscribe of unsubscribes!) {
-          unsubscribe();
-        }
-        unsubscribes = undefined;
-      }
-    };
-  }
-
-  //
-  //
-
-  return {
-    get value() {
-      if (callbacks.size === 0 || !hasValue) {
-        return getValue();
       }
       return value;
     },
