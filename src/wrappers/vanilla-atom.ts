@@ -47,6 +47,7 @@ type SignalValue<T> =
 export function selector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
+  is?: typeof Object.is,
 ): Signal<U>;
 
 //
@@ -55,7 +56,11 @@ export function selector<
   E extends Signal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
->(from: T, getter: (values: SignalValue<E>) => U): Signal<U>;
+>(
+  from: T,
+  getter: (values: SignalValue<E>) => U,
+  is?: typeof Object.is,
+): Signal<U>;
 
 //
 //
@@ -63,10 +68,11 @@ export function selector<
 export function selector(
   from: Signal<any> | Signal<any>[],
   getter: (values: any) => any,
+  is = Object.is,
 ): Signal<any> {
   return Array.isArray(from)
-    ? multiSelector(from as any, getter)
-    : singleSelector(from, getter);
+    ? multiSelector(from as any, getter, is)
+    : singleSelector(from, getter, is);
 }
 
 //
@@ -75,6 +81,7 @@ export function selector(
 function singleSelector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
+  is: typeof Object.is,
 ): Signal<U> {
   let value = getter(from.value);
   let unsubscribe: (() => void) | undefined;
@@ -90,8 +97,14 @@ function singleSelector<T extends Signal<any>, U>(
     if (!unsubscribe) {
       let firstSubscribe = true;
 
-      unsubscribe = from.subscribe((value) => {
-        value = getter(value);
+      unsubscribe = from.subscribe((fromValue) => {
+        const newValue = getter(fromValue);
+
+        if (is(newValue, value)) {
+          return;
+        }
+
+        value = newValue;
 
         if (!firstSubscribe) {
           callback(value);
@@ -140,7 +153,11 @@ function multiSelector<
   E extends Signal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
->(from: T, getter: (values: SignalValue<E>) => U): Signal<U> {
+>(
+  from: T,
+  getter: (values: SignalValue<E>) => U,
+  is: typeof Object.is,
+): Signal<U> {
   let values: any[];
   let value = getValue();
   let unsubscribes: (() => void)[] | undefined;
@@ -164,13 +181,21 @@ function multiSelector<
       let firstSubscribe = true;
 
       unsubscribes = from.map((signal, i) =>
-        signal.subscribe((value) => {
-          values[i] = value;
+        signal.subscribe((signalValue) => {
+          if (firstSubscribe) {
+            values[i] = signalValue;
+            value = getter(values as any);
+            return;
+          }
+
+          if (is(signalValue, values[i])) {
+            return;
+          }
+
+          values[i] = signalValue;
           value = getter(values as any);
 
-          if (!firstSubscribe) {
-            callback(value);
-          }
+          callback(value);
         }),
       );
 
@@ -196,6 +221,9 @@ function multiSelector<
 
   return {
     get value() {
+      if (callbacks.size === 0) {
+        return getValue();
+      }
       return value;
     },
     set value(newValue) {
