@@ -2,6 +2,8 @@
 
 Esse documento é um **esboço** e foi gerado pelo **ChatGPT** no dia 18 de Agosto de 2024. Tem como o objeto de dar uma descrição a respeito da diferença entre **atom** e **signal**, e comparar também com o modelo de **atom** do [Recoil](https://recoiljs.org/)
 
+Esse artigo aparentemente está errado, ao que parece [nanostores](https://github.com/nanostores/nanostores) é que está errada e usou a nomenclatura incorreta para **atom**, aparentemente é tudo **signal**, mas os **signals** que devem ser explicitamente subscribed seriam **manual signals** ou **explicity signals**, não parece ter uma definição clara
+
 No desenvolvimento de aplicações modernas, o gerenciamento de estado é crucial para garantir que a interface do usuário (UI) e a lógica de negócios estejam sempre em sincronia. Duas abordagens populares para o gerenciamento de estado são os **Signals** e os **Atoms**. Neste artigo, vamos explorar as diferenças entre essas duas abordagens, especialmente em bibliotecas como a [nanostores](https://github.com/nanostores/nanostores), onde Atoms são ainda mais simples que Signals.
 
 ## O que é um Signal?
