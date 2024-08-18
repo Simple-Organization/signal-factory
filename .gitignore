@@ -4,6 +4,7 @@ dist
 test-results
 
 vanilla-atom/*
+vanilla-class-atom/*
 vue/*
 solid/*
 angular/*
