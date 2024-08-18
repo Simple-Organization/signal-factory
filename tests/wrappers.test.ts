@@ -2,6 +2,7 @@ import test, { expect } from '@playwright/test';
 import { signal as vueSignal } from '../src/wrappers/vue';
 import { signal as solidSignal } from '../src/wrappers/solid';
 import { signalWrapper as angularSignal } from '../src/wrappers/angular';
+import { selector } from '../src/wrappers/vanilla-atom';
 
 //
 //
@@ -43,6 +44,31 @@ wrappers.forEach(({ name, atom }) => {
   //
   //
 
+  test(name + ' and selector should work together', async () => {
+    const signal = atom('hello');
+    const _selector = selector(signal, (value) => value + ' world');
+
+    const values: string[] = [];
+
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
+    });
+
+    signal.value = 'world';
+
+    // Wait for the next tick.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    unsubscribe();
+
+    signal.value = 'unsubscribed';
+
+    expect(values).toEqual(['hello world', 'world world']);
+  });
+
+  //
+  //
+
   test(name + ' should not call if value is a function', async () => {
     const notCall1 = () => {
       throw new Error('This should not be called');
@@ -69,7 +95,7 @@ wrappers.forEach(({ name, atom }) => {
   //
 
   test(name + ' must get subscribed values sync', () => {
-    test.fail(name === '@vue');
+    test.fail(name === '@vue'); // Only vue watcher is async.
 
     const signal = atom('hello');
 
