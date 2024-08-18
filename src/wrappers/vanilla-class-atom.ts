@@ -7,7 +7,10 @@ export class Atom<T> implements Signal<T> {
   protected _v: T;
   protected _cbs = new Set<(value: T) => void>();
 
-  constructor(initial: T) {
+  constructor(
+    initial: T,
+    readonly is: typeof Object.is = Object.is,
+  ) {
     this._v = initial;
   }
 
@@ -16,7 +19,7 @@ export class Atom<T> implements Signal<T> {
   }
 
   set value(newValue) {
-    if (Object.is(this._v, newValue)) {
+    if (this.is(this._v, newValue)) {
       return;
     }
 
