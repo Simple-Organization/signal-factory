@@ -4,8 +4,8 @@ import {
   Atom,
   selector as classSelector,
 } from '../src/wrappers/vanilla-class-atom';
-import { selector as multiSelector } from '../src/selector';
-import { Selector as MultiClassSelector } from '../src/selector-class';
+import { multiSelector as multiSelector } from '../src/multiSelector';
+import { MultiSelector as MultiClassSelector } from '../src/MultiSelector-class';
 import { setSignalFactory } from '../src';
 
 //

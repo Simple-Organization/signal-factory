@@ -3,7 +3,7 @@ import { Signal, signalFactory } from '.';
 //
 //
 
-export class Selector<T> {
+export class MultiSelector<T> {
   private from: Signal<any>[] | undefined;
   private values: any[] | undefined;
 

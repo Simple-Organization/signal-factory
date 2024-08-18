@@ -3,7 +3,7 @@ import { Signal, signalFactory } from '.';
 //
 //
 
-export function selector<T>(
+export function multiSelector<T>(
   getter: (get: <U>(signal: Signal<U>) => U) => T,
 ): Signal<T> {
   let from: Signal<any>[] | undefined;
