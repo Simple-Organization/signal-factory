@@ -39,6 +39,10 @@ export class Atom<T> implements Signal<T> {
       this._cbs.delete(callback);
     };
   }
+
+  get count() {
+    return this._cbs.size;
+  }
 }
 
 //
@@ -115,6 +119,10 @@ export class SingleSelector<T> implements Signal<T> {
         this._unsub = undefined;
       }
     };
+  }
+
+  get count() {
+    return this._cbs.size;
   }
 }
 

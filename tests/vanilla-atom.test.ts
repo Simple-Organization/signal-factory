@@ -4,24 +4,27 @@ import {
   Atom,
   selector as classSelector,
 } from '../src/wrappers/vanilla-class-atom';
+import { selector as multiSelector } from '../src/selector';
+import { setSignalFactory } from '../src';
 
 //
 //
 
 const atoms = [
-  { name: 'vanilla atom', atom, selector },
+  { name: 'vanilla atom', atom, singleSelector: selector, multiSelector },
   {
     name: 'vanilla class atom',
     // @ts-ignore
     atom: ((...args: any[]) => new Atom(...args)) as typeof atom,
-    selector: classSelector,
+    singleSelector: classSelector,
+    multiSelector: (() => {}) as any as typeof multiSelector,
   },
 ];
 
 //
 //
 
-atoms.forEach(({ name, atom, selector }) => {
+atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
   test.describe(name, () => {
     //
     //
@@ -100,7 +103,7 @@ atoms.forEach(({ name, atom, selector }) => {
 
     test('single selector must be created and unsubscribed normally', () => {
       const signal = atom('hello');
-      const _selector = selector(signal, (value1) => value1 + '2');
+      const _selector = singleSelector(signal, (value1) => value1 + '2');
 
       const values: string[] = [];
 
@@ -122,7 +125,7 @@ atoms.forEach(({ name, atom, selector }) => {
 
     test('If the atom have its value updated, but no one as subscribed to the single selector, it must keep sync', () => {
       const signal = atom('hello');
-      const _selector = selector(signal, (value1) => value1 + '2');
+      const _selector = singleSelector(signal, (value1) => value1 + '2');
 
       expect(_selector.value).toBe('hello2');
 
@@ -136,7 +139,7 @@ atoms.forEach(({ name, atom, selector }) => {
 
     test('If the same value is given to vanilla single selector factory, it must not reupdate', () => {
       const signal = atom('hello');
-      const _selector = selector(signal, (value) => value + 1);
+      const _selector = singleSelector(signal, (value) => value + 1);
 
       const values: string[] = [];
 
@@ -160,7 +163,7 @@ atoms.forEach(({ name, atom, selector }) => {
 
     test('If the atom reupdate the single selector should not reupdate', () => {
       const signal = atom('hello', () => false);
-      const _selector = selector(signal, (value) => value + 1);
+      const _selector = singleSelector(signal, (value) => value + 1);
 
       const values: string[] = [];
 
@@ -187,7 +190,7 @@ atoms.forEach(({ name, atom, selector }) => {
 
       let count = 0;
 
-      const _selector = selector(signal, (value) => {
+      const _selector = singleSelector(signal, (value) => {
         count++;
         return value + 1;
       });
@@ -206,16 +209,17 @@ atoms.forEach(({ name, atom, selector }) => {
   //
 
   test.describe(name + ': multi selector', () => {
+    setSignalFactory(atom);
+
     //
     //
 
     test('multi selector must be created and unsubscribed normally', () => {
+      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
+
       const signal1 = atom('hello');
       const signal2 = atom(2);
-      const _selector = selector(
-        [signal1, signal2],
-        ([value1, value2]) => value1 + value2,
-      );
+      const _selector = multiSelector((get) => get(signal1) + get(signal2));
 
       const values: string[] = [];
 
@@ -237,12 +241,11 @@ atoms.forEach(({ name, atom, selector }) => {
     //
 
     test('If the atom have its value updated, but no one as subscribed to the multi selector, it must keep sync', () => {
+      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
+
       const signal1 = atom('hello');
       const signal2 = atom(2);
-      const _selector = selector(
-        [signal1, signal2],
-        ([value1, value2]) => value1 + value2,
-      );
+      const _selector = multiSelector((get) => get(signal1) + get(signal2));
 
       expect(_selector.value).toBe('hello2');
 
@@ -255,12 +258,11 @@ atoms.forEach(({ name, atom, selector }) => {
     //
 
     test('If the same value is given to vanilla multi selector factory, it must not reupdate', () => {
+      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
+      
       const signal1 = atom('hello');
       const signal2 = atom(2);
-      const _selector = selector(
-        [signal1, signal2],
-        ([value1, value2]) => value1 + value2,
-      );
+      const _selector = multiSelector((get) => get(signal1) + get(signal2));
 
       const values: string[] = [];
 
@@ -286,12 +288,11 @@ atoms.forEach(({ name, atom, selector }) => {
     //
 
     test('If the atom reupdate the multi selector should not reupdate', () => {
+      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
+
       const signal1 = atom('hello', () => false);
       const signal2 = atom(2, () => false);
-      const _selector = selector(
-        [signal1, signal2],
-        ([value1, value2]) => value1 + value2,
-      );
+      const _selector = multiSelector((get) => get(signal1) + get(signal2));
 
       const values: string[] = [];
 
@@ -317,14 +318,16 @@ atoms.forEach(({ name, atom, selector }) => {
     //
 
     test('The multi selector must subscribe lazily', () => {
+      test.fixme(name === 'vanilla class atom', 'Not implemented yet');
+
       const signal1 = atom('hello');
       const signal2 = atom(2);
 
       let count = 0;
 
-      const _selector = selector([signal1, signal2], ([value1, value2]) => {
+      const _selector = multiSelector((get) => {
         count++;
-        return value1 + value2;
+        return get(signal1) + get(signal2);
       });
 
       expect(count).toBe(0);

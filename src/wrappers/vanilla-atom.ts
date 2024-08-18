@@ -148,5 +148,8 @@ function singleSelector<T extends Signal<any>, U>(
       return value;
     },
     subscribe,
+    get count() {
+      return callbacks.size;
+    },
   };
 }

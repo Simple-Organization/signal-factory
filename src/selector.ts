@@ -1,0 +1,121 @@
+import { Signal, signalFactory } from '.';
+
+//
+//
+
+export function selector<T>(
+  getter: (get: <U>(signal: Signal<U>) => U) => T,
+): Signal<T> {
+  let from: Signal<any>[] | undefined;
+  let values: any[] | undefined;
+
+  const internal = signalFactory<T>(undefined as any);
+
+  let unsubscribes: (() => void)[] | undefined;
+  let numSubscribers = 0;
+  let hasValue = false;
+
+  //
+  //
+
+  function getValue(): any {
+    values = [];
+
+    for (const signal of from!) {
+      values.push(signal.value);
+    }
+
+    internal.value = getter((signal) => signal.value);
+    return internal.value;
+  }
+
+  //
+  //
+
+  function firstGet(): any {
+    from = [];
+
+    const getMethod = (signal: Signal<any>) => {
+      if (!from!.includes(signal)) {
+        from!.push(signal);
+      }
+      return signal.value;
+    };
+
+    values = [];
+
+    for (const signal of from!) {
+      values.push(signal.value);
+    }
+
+    internal.value = getter(getMethod);
+
+    hasValue = true;
+  }
+
+  //
+  //
+
+  function subscribe(callback: (value: any) => void) {
+    if (!hasValue) {
+      firstGet();
+    }
+
+    if (!unsubscribes) {
+      let firstSubscribe = true;
+      unsubscribes = [];
+
+      for (let i = 0; i < from!.length; i++) {
+        const unsub = from![i].subscribe((signalValue) => {
+          if (firstSubscribe) {
+            return;
+          }
+
+          values![i] = signalValue;
+          internal.value = getter((signal) => signal.value);
+        });
+
+        unsubscribes.push(unsub);
+      }
+
+      firstSubscribe = false;
+    }
+
+    //
+    //
+
+    const unsub = internal.subscribe(callback);
+
+    numSubscribers++;
+
+    //
+    //
+
+    return () => {
+      unsub();
+      numSubscribers--;
+
+      if (numSubscribers === 0) {
+        for (const unsubscribe of unsubscribes!) {
+          unsubscribe();
+          unsubscribes = undefined;
+        }
+      }
+    };
+  }
+
+  //
+  //
+
+  return {
+    get value() {
+      if (!hasValue) {
+        firstGet();
+      } else if (numSubscribers === 0) {
+        return getValue();
+      }
+      return internal.value;
+    },
+    subscribe,
+  };
+}
