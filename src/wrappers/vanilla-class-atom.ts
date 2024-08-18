@@ -49,6 +49,7 @@ export class SingleSelector<T> implements Signal<T> {
   constructor(
     protected _from: Signal<T>,
     protected _getter: (value: T) => T,
+    readonly is: typeof Object.is,
   ) {
     this._v = _getter(_from.value);
   }
@@ -71,11 +72,17 @@ export class SingleSelector<T> implements Signal<T> {
     if (!this._unsub) {
       let firstSubscribe = true;
 
-      this._unsub = this._from.subscribe((value) => {
-        this._v = this._getter(value);
+      this._unsub = this._from.subscribe((fromValue) => {
+        const newValue = this._getter(fromValue);
+
+        if (this.is(newValue, this._v)) {
+          return;
+        }
+
+        this._v = newValue;
 
         if (!firstSubscribe) {
-          callback(this._v);
+          callback(newValue);
         }
       });
 
@@ -102,15 +109,20 @@ export class MultiSelector<T> implements Signal<T> {
   protected _v: T;
   protected _cbs = new Set<(value: T) => void>();
   protected _unsubs: (() => void)[] | undefined;
+  protected values!: any[];
 
   constructor(
     protected _from: Signal<any>[],
     protected _getter: (values: any[]) => T,
+    readonly is: typeof Object.is,
   ) {
-    this._v = _getter(_from.map((signal) => signal.value));
+    this._v = this._getValue();
   }
 
   get value() {
+    if (this._cbs.size === 0) {
+      return this._getValue();
+    }
     return this._v;
   }
 
@@ -121,17 +133,31 @@ export class MultiSelector<T> implements Signal<T> {
     }
   }
 
+  private _getValue(): any {
+    this.values = this._from.map((signal) => signal.value);
+    return this._getter(this.values as any);
+  }
+
   subscribe(callback: (value: T) => void) {
     if (!this._unsubs) {
       let firstSubscribe = true;
 
       this._unsubs = this._from.map((signal, i) =>
-        signal.subscribe((value) => {
-          this._v = this._getter(this._from.map((signal) => signal.value));
-
-          if (!firstSubscribe) {
-            callback(this._v);
+        signal.subscribe((signalValue) => {
+          if (firstSubscribe) {
+            this.values[i] = signalValue;
+            this._v = this._getter(this.values as any);
+            return;
           }
+
+          if (this.is(signalValue, this.values[i])) {
+            return;
+          }
+
+          this.values[i] = signalValue;
+          this._v = this._getter(this.values as any);
+
+          callback(this.value);
         }),
       );
 
@@ -167,6 +193,7 @@ type SignalValue<T> =
 export function selector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
+  is?: typeof Object.is,
 ): Signal<U>;
 
 //
@@ -175,7 +202,11 @@ export function selector<
   E extends Signal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
->(from: T, getter: (values: SignalValue<E>) => U): Signal<U>;
+>(
+  from: T,
+  getter: (values: SignalValue<E>) => U,
+  is?: typeof Object.is,
+): Signal<U>;
 
 //
 //
@@ -183,8 +214,9 @@ export function selector<
 export function selector(
   from: Signal<any> | Signal<any>[],
   getter: (values: any) => any,
+  is = Object.is,
 ): Signal<any> {
   return Array.isArray(from)
-    ? new MultiSelector(from as any, getter)
-    : new SingleSelector(from, getter);
+    ? new MultiSelector(from as any, getter, is)
+    : new SingleSelector(from, getter, is);
 }
