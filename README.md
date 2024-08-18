@@ -274,3 +274,11 @@ wrapped.subscribe((value) => console.log(value));
 
 wrapped.lisCount; // 1
 ```
+
+## Dúvidas do autor
+
+Será se eu incorporo o `signal-factory/vanilla-atom` como padrão? Ou seja, se não usar nada, ele usa o `vanilla-atom`
+
+Além do mais eu estava pensando em criar o `signal-factory/vanilla-signal` que ao invés de usar o `selector`, usa o `computed`
+
+Também estava pensando em criar o `signal-factory/vanilla-class-atom` que usa o `Atom` como class, queria criar esse, e fazer `benchmarks` a respeito do uso do `atom` vs `Atom`, especialmente no que se diz a respeito de memória
