@@ -21,7 +21,7 @@ await esbuild.build({
 await esbuild.build({
   entryPoints: ['./src/wrappers/vanilla-class-atom.ts'],
   bundle: true,
-  outfile: 'vanilla-atom/index.js',
+  outfile: 'vanilla-class-atom/index.js',
   format: 'esm',
 });
 

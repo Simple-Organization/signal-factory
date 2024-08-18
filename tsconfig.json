@@ -12,6 +12,7 @@
     "noImplicitAny": true,
     "declaration": true,
     "emitDeclarationOnly": true,
+    "stripInternal": true,
     "jsxImportSource": "preact",
     "jsx": "react-jsx",
     "types": ["preact"]

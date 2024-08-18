@@ -4,7 +4,9 @@ import { Signal } from '..';
 //
 
 export class Atom<T> implements Signal<T> {
+  /** @internal */
   protected _v: T;
+  /** @internal */
   protected _cbs = new Set<(value: T) => void>();
 
   constructor(
@@ -42,15 +44,24 @@ export class Atom<T> implements Signal<T> {
 //
 
 export class SingleSelector<T> implements Signal<T> {
+  /** @internal */
   protected _v: T;
+  /** @internal */
   protected _cbs = new Set<(value: T) => void>();
+  /** @internal */
   protected _unsub: (() => void) | undefined;
+  /** @internal */
+  protected _from: Signal<any>;
+  /** @internal */
+  protected _getter: (value: T) => T;
 
   constructor(
-    protected _from: Signal<T>,
-    protected _getter: (value: T) => T,
+    _from: Signal<T>,
+    _getter: (value: T) => T,
     readonly is: typeof Object.is,
   ) {
+    this._from = _from;
+    this._getter = _getter;
     this._v = _getter(_from.value);
   }
 
@@ -106,16 +117,26 @@ export class SingleSelector<T> implements Signal<T> {
 //
 
 export class MultiSelector<T> implements Signal<T> {
+  /** @internal */
   protected _v: T;
+  /** @internal */
   protected _cbs = new Set<(value: T) => void>();
+  /** @internal */
   protected _unsubs: (() => void)[] | undefined;
+  /** @internal */
+  protected _from: Signal<any>[];
+  /** @internal */
+  protected _getter: (value: any[]) => T;
+  /** @internal */
   protected values!: any[];
 
   constructor(
-    protected _from: Signal<any>[],
-    protected _getter: (values: any[]) => T,
+    _from: Signal<any>[],
+    _getter: (values: any[]) => T,
     readonly is: typeof Object.is,
   ) {
+    this._from = _from;
+    this._getter = _getter;
     this._v = this._getValue();
   }
 
@@ -133,6 +154,7 @@ export class MultiSelector<T> implements Signal<T> {
     }
   }
 
+  /** @internal */
   private _getValue(): any {
     this.values = this._from.map((signal) => signal.value);
     return this._getter(this.values as any);
