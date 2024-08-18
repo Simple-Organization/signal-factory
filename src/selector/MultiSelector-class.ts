@@ -1,4 +1,4 @@
-import { Signal, signalFactory } from '.';
+import { Signal, signalFactory } from '..';
 
 //
 //

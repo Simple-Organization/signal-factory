@@ -1,10 +1,11 @@
-import { Signal, signalFactory } from '.';
+import { Signal, signalFactory } from '..';
 
 //
 //
 
 export function multiSelector<T>(
   getter: (get: <U>(signal: Signal<U>) => U) => T,
+  is: typeof Object.is = Object.is,
 ): Signal<T> {
   let from: Signal<any>[] | undefined;
   let values: any[] | undefined;

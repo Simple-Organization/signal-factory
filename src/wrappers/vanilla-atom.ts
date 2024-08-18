@@ -79,10 +79,10 @@ export function selector(
 //
 //
 
-function singleSelector<T extends Signal<any>, U>(
+export function singleSelector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
-  is: typeof Object.is,
+  is: typeof Object.is = Object.is,
 ): Signal<U> {
   let value!: any;
   let unsubscribe: (() => void) | undefined;
