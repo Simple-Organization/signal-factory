@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { createMemo, createRoot, createSignal } from 'solid-js';
+import { createMemo, createSignal } from 'solid-js';
 import { computed, ref, watch } from 'vue';
 import {
   signal as angularSignal,

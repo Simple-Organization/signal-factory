@@ -1,6 +1,6 @@
 import { Signal } from '..';
-import { singleSelector } from '../wrappers/vanilla-atom';
 import { multiSelector } from './multiSelector';
+import { singleSelector } from './singleSelector';
 
 //
 

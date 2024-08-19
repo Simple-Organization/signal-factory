@@ -1,26 +1,34 @@
 import { test, expect } from '@playwright/test';
-import { atom, selector } from '../src/wrappers/vanilla-atom';
-import {
-  Atom,
-  selector as classSelector,
-} from '../src/wrappers/vanilla-class-atom';
+import { atom } from '../src/wrappers/vanilla-atom';
+import { Atom } from '../src/wrappers/vanilla-class-atom';
 import { multiSelector as multiSelector } from '../src/selector/multiSelector';
 import { MultiSelector as MultiClassSelector } from '../src/selector/MultiSelector-class';
 import { setSignalFactory } from '../src';
+import { selector as defaultSelector } from '../src/selector/selector';
+import { singleSelector } from '../src/selector/singleSelector';
+import { SingleSelector } from '../src/selector/SingleSelector-class';
 
 //
 //
 
 const atoms = [
-  { name: 'vanilla atom', atom, singleSelector: selector, multiSelector },
+  { name: 'vanilla atom', atom, singleSelector, multiSelector },
   {
     name: 'vanilla class atom',
     // @ts-ignore
     atom: ((...args: any[]) => new Atom(...args)) as typeof atom,
-    singleSelector: classSelector,
+    singleSelector: ((...args: any[]) =>
+      // @ts-ignore
+      new SingleSelector(...args)) as typeof singleSelector,
     multiSelector: ((...args: any[]) =>
       // @ts-ignore
       new MultiClassSelector(...args)) as typeof multiSelector,
+  },
+  {
+    name: 'default selector',
+    atom,
+    singleSelector: defaultSelector,
+    multiSelector: defaultSelector,
   },
 ];
 

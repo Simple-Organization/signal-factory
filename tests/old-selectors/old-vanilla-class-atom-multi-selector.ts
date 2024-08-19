@@ -1,5 +1,5 @@
 import { Signal } from '../../src';
-import { selector } from '../../src/wrappers/vanilla-class-atom';
+import { SingleSelector } from '../../src/selector/SingleSelector-class';
 
 //
 //
@@ -34,7 +34,7 @@ export function oldSelector(
 ): Signal<any> {
   return Array.isArray(from)
     ? new MultiSelector(from as any, getter, is)
-    : selector(from, getter, is);
+    : new SingleSelector(from, getter, is);
 }
 
 //
