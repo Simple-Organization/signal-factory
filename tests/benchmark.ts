@@ -4,11 +4,14 @@ import { Atom } from '../src/wrappers/vanilla-class-atom';
 import { singleSelector } from '../src/selector/singleSelector';
 import { SingleSelector } from '../src/selector/SingleSelector-class';
 import { setSignalFactory, signalFactory } from '../src';
+import { multiSelector } from '../src/selector/multiSelector';
+import { MultiSelector } from '../src/selector/MultiSelector-class';
 
 //
 // Função para executar o benchmark
 async function runBenchmark() {
   let results: { name: string; hz: number; stats: any }[] = [];
+  const runAll = true;
 
   //
   //
@@ -45,13 +48,14 @@ async function runBenchmark() {
   //
 
   function newSuite(run: boolean, cb: (suite: Benchmark.Suite) => void) {
-    if (!run) return;
+    if (!run && !runAll) return;
 
     results = [];
     return new Promise((resolve) => {
       const suite = new Benchmark.Suite()
         .on('cycle', cycleListener)
-        .on('complete', () => completeListener(resolve));
+        .on('complete', () => completeListener(resolve))
+        .on('error', (event: any) => console.error(event.target.error));
 
       cb(suite);
       suite.run({ async: true });
@@ -61,7 +65,7 @@ async function runBenchmark() {
   //
   //
 
-  await newSuite(true, (suite) => {
+  await newSuite(false, (suite) => {
     console.log('Benchmarking Atom creation\n');
 
     setSignalFactory((initial) => new Atom(initial));
@@ -133,6 +137,109 @@ async function runBenchmark() {
       })
       .add('Create singleSelector using Class', () => {
         new SingleSelector(signal2, (value) => value);
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking singleSelector creation and subscription\n');
+
+    const signal1 = atom(0);
+    const signal2 = new Atom(0);
+
+    suite
+      .add('Create singleSelector using Function', () => {
+        const _s = singleSelector(signal1, (value) => value);
+        const unsub = _s.subscribe(() => {});
+        unsub();
+      })
+      .add('Create singleSelector using Class', () => {
+        const _s = new SingleSelector(signal2, (value) => value);
+        const unsub = _s.subscribe(() => {});
+        unsub();
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking multiSelector creation\n');
+
+    const signal1 = atom(0);
+    const signal2 = atom(0);
+    const signal3 = new Atom(0);
+    const signal4 = new Atom(0);
+
+    setSignalFactory((initial) => atom(initial));
+
+    suite
+      .on('cycle', () => {
+        setSignalFactory((initial) => new Atom(initial));
+      })
+      .add('Create multiSelector using Function', () => {
+        multiSelector((get) => get(signal1) + get(signal2));
+      })
+      .add('Create multiSelector using Class', () => {
+        new MultiSelector((get) => get(signal3) + get(signal4));
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking multiSelector value access\n');
+
+    setSignalFactory((initial) => atom(initial));
+    const signal1 = atom(0);
+    const signal2 = atom(0);
+    const mult1 = multiSelector((get) => get(signal1) + get(signal2));
+
+    setSignalFactory((initial) => new Atom(initial));
+    const signal3 = new Atom(0);
+    const signal4 = new Atom(0);
+    const mult2 = new MultiSelector((get) => get(signal3) + get(signal4));
+
+    setSignalFactory((initial) => atom(initial));
+
+    suite
+      .add('Create multiSelector using Function', () => {
+        mult1.value;
+      })
+      .add('Create multiSelector using Class', () => {
+        mult2.value;
+      });
+  });
+
+  //
+  //
+
+  await newSuite(true, (suite) => {
+    console.log('\nBenchmarking multiSelector subscribe\n');
+
+    setSignalFactory((initial) => atom(initial));
+    const signal1 = atom(0);
+    const signal2 = atom(0);
+    const mult1 = multiSelector((get) => get(signal1) + get(signal2));
+
+    setSignalFactory((initial) => new Atom(initial));
+    const signal3 = new Atom(0);
+    const signal4 = new Atom(0);
+    const mult2 = new MultiSelector((get) => get(signal3) + get(signal4));
+
+    setSignalFactory((initial) => atom(initial));
+
+    suite
+      .add('Create multiSelector using Function', () => {
+        const unsub = mult1.subscribe(() => {});
+        unsub();
+      })
+      .add('Create multiSelector using Class', () => {
+        const unsub = mult2.subscribe(() => {});
+        unsub();
       });
   });
 }
