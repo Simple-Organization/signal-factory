@@ -1,3 +1,5 @@
+import { Atom } from './atoms/class-atom';
+
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
  */
@@ -34,7 +36,7 @@ export function setSignalFactory(factory: (initial: any) => Signal): void {
 //
 
 export function atom<T>(initial: T, is?: typeof Object.is): Signal<T> {
-  return signalFactory(initial, is);
+  return new Atom(initial, is);
 }
 
 /**
@@ -46,7 +48,7 @@ export function atom<T>(initial: T, is?: typeof Object.is): Signal<T> {
 export let signalFactory: <T>(initial: T, is?: typeof Object.is) => Signal<T> =
   atom;
 
+export { Atom };
 export { selector } from './selector/selector';
 export { MultiSelector } from './selector/MultiSelector-class';
 export { SingleSelector } from './selector/SingleSelector-class';
-export { Atom } from './atoms/class-atom';
