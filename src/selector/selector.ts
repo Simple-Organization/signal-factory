@@ -1,36 +1,37 @@
-import { MultiSelector, Signal, SingleSelector } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import { MultiSelector, SingleSelector } from '..';
 
 //
 
 /** One or more values from `Signal` stores. */
 type SignalValue<T> =
-  T extends Signal<infer U>
+  T extends OldSignal<infer U>
     ? U
-    : { [K in keyof T]: T[K] extends Signal<infer U> ? U : never };
+    : { [K in keyof T]: T[K] extends OldSignal<infer U> ? U : never };
 
 //
 
-export function selector<T extends Signal<any>, U>(
+export function selector<T extends OldSignal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
   is?: typeof Object.is,
-): Signal<U>;
+): OldSignal<U>;
 
 //
 
 export function selector<T>(
-  getter: (get: <U>(signal: Signal<U>) => U) => T,
+  getter: (get: <U>(signal: OldSignal<U>) => U) => T,
   is?: typeof Object.is,
-): Signal<T>;
+): OldSignal<T>;
 
 //
 //
 
 export function selector(
-  arg1: Signal<any> | ((get: <U>(signal: Signal<U>) => U) => any),
+  arg1: OldSignal<any> | ((get: <U>(signal: OldSignal<U>) => U) => any),
   arg2?: ((value: any) => any) | typeof Object.is,
   arg3?: typeof Object.is,
-): Signal<any> {
+): OldSignal<any> {
   if (typeof arg1 === 'function') {
     return new MultiSelector(arg1, arg2 as typeof Object.is);
   }

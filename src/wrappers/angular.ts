@@ -1,10 +1,10 @@
-import { Signal } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 import { signal } from '@angular/core';
 
 //
 //
 
-export function signalWrapper<T>(initial: T): Signal<T> {
+export function signalWrapper<T>(initial: T): OldSignal<T> {
   const _signal = signal<T>(initial);
 
   const callbacks = new Set<(value: T) => void>();

@@ -1,10 +1,10 @@
+import type { ReadableSignal } from '..';
 import { useEffect, useState, useRef } from 'preact/hooks';
-import { Signal } from '..';
 
 //
 //
 
-export function useSubSignals<T>(getter: () => Signal<T>[]) {
+export function useSubSignals<T>(getter: () => ReadableSignal<T>[]) {
   const state = useState<any>();
   const ref = useRef<any>();
 

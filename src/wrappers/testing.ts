@@ -1,9 +1,9 @@
-import { Signal } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 
 /**
  * Wrapper for a signal/atom that adds additional properties for testing.
  */
-export interface TestSignal<T = any> extends Signal<T> {
+export interface TestSignal<T = any> extends OldSignal<T> {
   /**
    * The current number of listeners subscribed to the signal/atom.
    */
@@ -17,7 +17,7 @@ export interface TestSignal<T = any> extends Signal<T> {
 //
 //
 
-export function testWrapper<T>(signal: Signal<T>): TestSignal<T> {
+export function testWrapper<T>(signal: OldSignal<T>): TestSignal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = signal.value;
   let history: T[] = [value];

@@ -1,17 +1,18 @@
-import { Signal, signalFactory } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 import { _is } from '../utils';
+import { oldSignalFactory } from '../../tests/old-selectors/oldSignalFactory';
 
 //
 //
 
 export function multiSelector<T>(
-  getter: (get: <U>(signal: Signal<U>) => U) => T,
+  getter: (get: <U>(signal: OldSignal<U>) => U) => T,
   is: typeof Object.is = _is,
-): Signal<T> {
-  let from: Signal<any>[] | undefined;
+): OldSignal<T> {
+  let from: OldSignal<any>[] | undefined;
   let values: any[] | undefined;
 
-  const internal = signalFactory<T>(undefined as any);
+  const internal = oldSignalFactory<T>(undefined as any);
 
   let unsubscribes: (() => void)[] | undefined;
   let numSubscribers = 0;
@@ -37,7 +38,7 @@ export function multiSelector<T>(
   function firstGet(): any {
     from = [];
 
-    const getMethod = (signal: Signal<any>) => {
+    const getMethod = (signal: OldSignal<any>) => {
       if (!from!.includes(signal)) {
         from!.push(signal);
       }

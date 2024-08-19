@@ -1,10 +1,10 @@
-import { Signal } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 import { _is } from '../utils';
 
 //
 //
 
-export function atom<T>(initial: T, is = _is): Signal<T> {
+export function atom<T>(initial: T, is = _is): OldSignal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 

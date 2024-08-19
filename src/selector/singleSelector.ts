@@ -1,20 +1,20 @@
-import { Signal } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 import { _is } from '../utils';
 
 //
 //
 
 /** One value from a `Signal`. */
-type SignalValue<T> = T extends Signal<infer U> ? U : never;
+type SignalValue<T> = T extends OldSignal<infer U> ? U : never;
 
 //
 //
 
-export function singleSelector<T extends Signal<any>, U>(
+export function singleSelector<T extends OldSignal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
   is: typeof Object.is = _is,
-): Signal<U> {
+): OldSignal<U> {
   let value!: any;
   let unsubscribe: (() => void) | undefined;
   let hasValue = false;

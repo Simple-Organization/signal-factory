@@ -1,36 +1,37 @@
-import { Signal, SingleSelector } from '../../src';
+import type { OldSignal } from './OldSignal';
+import { SingleSelector } from '../../src';
 
 //
 //
 
 //
 
-export function oldSelector<T extends Signal<any>, U>(
+export function oldSelector<T extends OldSignal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
   is?: typeof Object.is,
-): Signal<U>;
+): OldSignal<U>;
 
 //
 
 export function oldSelector<
-  E extends Signal<any>,
+  E extends OldSignal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
 >(
   from: T,
   getter: (values: SignalValue<E>) => U,
   is?: typeof Object.is,
-): Signal<U>;
+): OldSignal<U>;
 
 //
 //
 
 export function oldSelector(
-  from: Signal<any> | Signal<any>[],
+  from: OldSignal<any> | OldSignal<any>[],
   getter: (values: any) => any,
   is = Object.is,
-): Signal<any> {
+): OldSignal<any> {
   return Array.isArray(from)
     ? new MultiSelector(from as any, getter, is)
     : new SingleSelector(from, getter, is);
@@ -41,14 +42,14 @@ export function oldSelector(
 
 /** One or more values from `Signal` stores. */
 export type SignalValue<T> =
-  T extends Signal<infer U>
+  T extends OldSignal<infer U>
     ? U
-    : { [K in keyof T]: T[K] extends Signal<infer U> ? U : never };
+    : { [K in keyof T]: T[K] extends OldSignal<infer U> ? U : never };
 
 //
 //
 
-export class MultiSelector<T> implements Signal<T> {
+export class MultiSelector<T> implements OldSignal<T> {
   /** @internal */
   protected _v!: T;
   /** @internal */
@@ -56,7 +57,7 @@ export class MultiSelector<T> implements Signal<T> {
   /** @internal */
   protected _unsubs: (() => void)[] | undefined;
   /** @internal */
-  protected _from: Signal<any>[];
+  protected _from: OldSignal<any>[];
   /** @internal */
   protected _getter: (value: any[]) => T;
   /** @internal */
@@ -65,7 +66,7 @@ export class MultiSelector<T> implements Signal<T> {
   protected _hasValue = false;
 
   constructor(
-    from: Signal<any>[],
+    from: OldSignal<any>[],
     getter: (values: any[]) => T,
     readonly is: typeof Object.is,
   ) {

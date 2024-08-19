@@ -1,10 +1,10 @@
-import { Signal } from '..';
+import type { OldSignal } from '../../tests/old-selectors/OldSignal';
 import { type Ref, ref, watch } from 'vue';
 
 //
 //
 
-export function signal<T>(initial: T): Signal<T> {
+export function signal<T>(initial: T): OldSignal<T> {
   const _signal: any = ref(initial);
 
   //

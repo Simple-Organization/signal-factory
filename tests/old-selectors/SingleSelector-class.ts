@@ -1,10 +1,10 @@
-import { Signal } from '../../src';
+import type { OldSignal } from './OldSignal'
 import { _is } from '../../src/utils';
 
 //
 //
 
-export class SingleSelector<T> implements Signal<T> {
+export class SingleSelector<T> implements OldSignal<T> {
   /** @internal */
   protected _v!: T;
   /** @internal */
@@ -12,14 +12,14 @@ export class SingleSelector<T> implements Signal<T> {
   /** @internal */
   protected _unsub: (() => void) | undefined;
   /** @internal */
-  protected _from: Signal<any>;
+  protected _from: OldSignal<any>;
   /** @internal */
   protected _getter: (value: T) => T;
   /** @internal */
   protected _hasValue = false;
 
   constructor(
-    from: Signal<T>,
+    from: OldSignal<T>,
     getter: (value: T) => T,
     readonly is: typeof Object.is = _is,
   ) {

@@ -3,13 +3,12 @@ import { Atom } from '../tests/old-selectors/class-atom';
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
  */
-export type Signal<T = any> = {
+export type ReadableSignal<T = any> = {
   /**
    * The current value of the signal/atom.
-   *
-   * Depending on the implementation, this value may be mutable.
    */
-  value: T;
+  get: () => T;
+
   /**
    * Subscribes to changes in the signal/atom.
    * @param callback - The function to call when the signal/atom's value changes.
@@ -26,17 +25,23 @@ export type Signal<T = any> = {
 };
 
 /**
+ * Represents a signal/atom that holds a value and allows subscribing to changes.
+ */
+export interface WritableSignal<T = any> extends ReadableSignal<T> {
+  /**
+   * Sets the value of the signal/atom.
+   */
+  set: (value: T) => void;
+}
+
+/**
  * Sets the signalFactory.
  * @param factory - Function that creates a signal with an initial value.
  */
-export function setSignalFactory(factory: (initial: any) => Signal): void {
+export function setSignalFactory(
+  factory: (initial: any) => WritableSignal,
+): void {
   signalFactory = factory;
-}
-//
-//
-
-export function atom<T>(initial: T, is?: typeof Object.is): Signal<T> {
-  return new Atom(initial, is);
 }
 
 /**
@@ -45,8 +50,17 @@ export function atom<T>(initial: T, is?: typeof Object.is): Signal<T> {
  * @returns A signal with the specified initial value.
  * @throws {Error} - If the signal factory is not set.
  */
-export let signalFactory: <T>(initial: T, is?: typeof Object.is) => Signal<T> =
-  atom;
+export let signalFactory: <T>(
+  initial: T,
+  is?: typeof Object.is,
+) => ReadableSignal<T> = atom;
+
+//
+//
+
+export function atom<T>(initial: T, is?: typeof Object.is): WritableSignal<T> {
+  return new Atom(initial, is);
+}
 
 export { Atom };
 export { selector } from './selector/selector';

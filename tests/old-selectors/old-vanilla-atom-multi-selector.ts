@@ -1,35 +1,35 @@
-import { Signal } from '../../src';
+import type { OldSignal } from './OldSignal'
 import { singleSelector } from '../../src/selector/singleSelector';
 
 //
 //
 
-export function oldSelector<T extends Signal<any>, U>(
+export function oldSelector<T extends OldSignal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
   is?: typeof Object.is,
-): Signal<U>;
+): OldSignal<U>;
 
 //
 
 export function oldSelector<
-  E extends Signal<any>,
+  E extends OldSignal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
 >(
   from: T,
   getter: (values: SignalValue<E>) => U,
   is?: typeof Object.is,
-): Signal<U>;
+): OldSignal<U>;
 
 //
 //
 
 export function oldSelector(
-  from: Signal<any> | Signal<any>[],
+  from: OldSignal<any> | OldSignal<any>[],
   getter: (values: any) => any,
   is = Object.is,
-): Signal<any> {
+): OldSignal<any> {
   return Array.isArray(from)
     ? multiSelector(from as any, getter, is)
     : singleSelector(from, getter, is);
@@ -40,22 +40,22 @@ export function oldSelector(
 
 /** One or more values from `Signal` stores. */
 export type SignalValue<T> =
-  T extends Signal<infer U>
+  T extends OldSignal<infer U>
     ? U
-    : { [K in keyof T]: T[K] extends Signal<infer U> ? U : never };
+    : { [K in keyof T]: T[K] extends OldSignal<infer U> ? U : never };
 
 //
 //
 
 export function multiSelector<
-  E extends Signal<any>,
+  E extends OldSignal<any>,
   T extends Readonly<[E, ...E[]]>,
   U,
 >(
   from: T,
   getter: (values: SignalValue<E>) => U,
   is: typeof Object.is,
-): Signal<U> {
+): OldSignal<U> {
   let values: any[];
   let value!: any;
   let unsubscribes: (() => void)[] | undefined;

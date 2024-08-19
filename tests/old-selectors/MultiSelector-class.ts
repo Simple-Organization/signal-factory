@@ -1,17 +1,18 @@
-import { type Signal, signalFactory } from '../../src';
+import type { OldSignal } from './OldSignal';
 import { _is } from '../../src/utils';
+import { oldSignalFactory } from './oldSignalFactory';
 
 //
 //
 
 export class MultiSelector<T> {
   /** @internal */
-  private from: Signal<any>[] | undefined;
+  private from: OldSignal<any>[] | undefined;
   /** @internal */
   private values: any[] | undefined;
 
   /** @internal */
-  private internal: Signal<T>;
+  private internal: OldSignal<T>;
 
   /** @internal */
   private unsubscribes: (() => void)[] | undefined;
@@ -20,17 +21,17 @@ export class MultiSelector<T> {
   /** @internal */
   private hasValue = false;
   /** @internal */
-  getter: (get: <U>(signal: Signal<U>) => U) => T;
+  getter: (get: <U>(signal: OldSignal<U>) => U) => T;
 
   //
   //
 
   constructor(
-    getter: (get: <U>(signal: Signal<U>) => U) => T,
+    getter: (get: <U>(signal: OldSignal<U>) => U) => T,
     public is: typeof Object.is = _is,
   ) {
     this.getter = getter;
-    this.internal = signalFactory<T>(undefined as any);
+    this.internal = oldSignalFactory<T>(undefined as any);
   }
 
   //
@@ -52,7 +53,7 @@ export class MultiSelector<T> {
   private firstGet(): any {
     this.from = [];
 
-    const getMethod = (signal: Signal<any>) => {
+    const getMethod = (signal: OldSignal<any>) => {
       if (!this.from!.includes(signal)) {
         this.from!.push(signal);
       }

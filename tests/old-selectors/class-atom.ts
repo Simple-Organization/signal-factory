@@ -1,10 +1,10 @@
-import { Signal } from '../../src';
+import type { OldSignal } from './OldSignal'
 import { _is } from '../../src/utils';
 
 //
 //
 
-export class Atom<T> implements Signal<T> {
+export class Atom<T> implements OldSignal<T> {
   /** @internal */
   protected _v: T;
   /** @internal */
