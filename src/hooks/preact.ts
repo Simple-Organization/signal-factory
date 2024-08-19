@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useState, useRef } from 'preact/hooks';
 import { Signal } from '..';
 
 //
@@ -6,6 +6,9 @@ import { Signal } from '..';
 
 export function useSubSignals<T>(getter: () => Signal<T>[]) {
   const state = useState<any>();
+  const ref = useRef<any>();
+
+  ref.current = state;
 
   //
 
@@ -14,7 +17,7 @@ export function useSubSignals<T>(getter: () => Signal<T>[]) {
     let subscriptions = new Set<() => void>();
 
     const callback = () => {
-      state[1](!state[0]);
+      ref.current[1](!ref.current[0]);
     };
 
     for (const signal of signals) {
