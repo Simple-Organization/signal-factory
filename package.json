@@ -6,7 +6,8 @@
     "build": "tsc && rollup -c && node esbuild.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "test": "playwright test",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "benchmark": "tsx tests/benchmark.ts"
   },
   "main": "dist/index.js",
   "repository": {
@@ -18,12 +19,15 @@
   "devDependencies": {
     "@angular/core": ">=16",
     "@playwright/test": "^1.46.0",
+    "@types/benchmark": "^2.1.5",
+    "benchmark": "^2.1.4",
     "esbuild": "^0.23.0",
     "preact": ">=10",
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
     "solid-js": ">=1.8",
+    "tsx": "^4.17.0",
     "typescript": "^5.5.4",
     "vue": ">=3"
   },

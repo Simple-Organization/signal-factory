@@ -11,7 +11,7 @@ export class Atom<T> implements Signal<T> {
 
   constructor(
     initial: T,
-    readonly is: typeof Object.is = Object.is,
+    public is: typeof Object.is = Object.is,
   ) {
     this._v = initial;
   }

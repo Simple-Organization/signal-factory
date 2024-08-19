@@ -40,3 +40,5 @@ export let signalFactory: <T>(initial: T) => Signal<T> = () => {
 export function setSignalFactory(factory: (initial: any) => Signal): void {
   signalFactory = factory;
 }
+
+export { selector } from './selector/selector';

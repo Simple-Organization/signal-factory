@@ -3,11 +3,8 @@ import { Signal } from '..';
 //
 //
 
-/** One or more values from `Signal` stores. */
-type SignalValue<T> =
-  T extends Signal<infer U>
-    ? U
-    : { [K in keyof T]: T[K] extends Signal<infer U> ? U : never };
+/** One value from a `Signal`. */
+type SignalValue<T> = T extends Signal<infer U> ? U : never;
 
 //
 //
