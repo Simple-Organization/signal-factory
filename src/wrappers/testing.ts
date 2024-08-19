@@ -1,9 +1,9 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import type { WritableSignal } from '..';
 
 /**
  * Wrapper for a signal/atom that adds additional properties for testing.
  */
-export interface TestSignal<T = any> extends OldSignal<T> {
+export interface TestSignal<T = any> extends WritableSignal<T> {
   /**
    * The current number of listeners subscribed to the signal/atom.
    */
@@ -17,9 +17,9 @@ export interface TestSignal<T = any> extends OldSignal<T> {
 //
 //
 
-export function testWrapper<T>(signal: OldSignal<T>): TestSignal<T> {
+export function testWrapper<T>(signal: WritableSignal<T>): TestSignal<T> {
   const callbacks = new Set<(value: T) => void>();
-  let value = signal.value;
+  let value = signal.get();
   let history: T[] = [value];
 
   const subscribe = (callback: (value: T) => void) => {
@@ -30,18 +30,28 @@ export function testWrapper<T>(signal: OldSignal<T>): TestSignal<T> {
     };
   };
 
+  //
+  //
+
+  function get() {
+    return value;
+  }
+
+  //
+  //
+
+  function set(newValue: T) {
+    value = newValue;
+    history = [...history, newValue];
+    for (const callback of callbacks) {
+      callback(value);
+    }
+  }
+
   return {
-    get value() {
-      return value;
-    },
-    set value(newValue) {
-      value = newValue;
-      history = [...history, newValue];
-      for (const callback of callbacks) {
-        callback(value);
-      }
-    },
+    get,
     subscribe,
+    set,
     get count() {
       return callbacks.size;
     },

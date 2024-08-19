@@ -1,5 +1,5 @@
 import type { OldSignal } from './OldSignal'
-import { singleSelector } from '../../src/selector/singleSelector';
+import { singleSelector } from './singleSelector';
 
 //
 //

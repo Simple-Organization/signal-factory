@@ -1,4 +1,4 @@
-import { Atom } from '../tests/old-selectors/class-atom';
+import { atom } from './atoms/atom';
 
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
@@ -53,16 +53,9 @@ export function setSignalFactory(
 export let signalFactory: <T>(
   initial: T,
   is?: typeof Object.is,
-) => ReadableSignal<T> = atom;
+) => WritableSignal<T> = atom;
 
 //
-//
 
-export function atom<T>(initial: T, is?: typeof Object.is): WritableSignal<T> {
-  return new Atom(initial, is);
-}
-
-export { Atom };
+export { atom };
 export { selector } from './selector/selector';
-export { MultiSelector } from '../tests/old-selectors/MultiSelector-class';
-export { SingleSelector } from '../tests/old-selectors/SingleSelector-class';

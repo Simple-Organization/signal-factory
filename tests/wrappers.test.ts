@@ -29,14 +29,14 @@ wrappers.forEach(({ name, atom }) => {
       values.push(value);
     });
 
-    signal.value = 'world';
+    signal.set('world');
 
     // Wait for the next tick.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     unsubscribe();
 
-    signal.value = 'unsubscribed';
+    signal.set('unsubscribed');
 
     expect(values).toEqual(['hello', 'world']);
   });
@@ -46,7 +46,7 @@ wrappers.forEach(({ name, atom }) => {
 
   test(name + ' and selector should work together', async () => {
     const signal = atom('hello');
-    const _selector = selector(signal, (value) => value + ' world');
+    const _selector = selector((get) => get(signal) + ' world');
 
     const values: string[] = [];
 
@@ -54,14 +54,14 @@ wrappers.forEach(({ name, atom }) => {
       values.push(value);
     });
 
-    signal.value = 'world';
+    signal.set('world');
 
     // Wait for the next tick.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     unsubscribe();
 
-    signal.value = 'unsubscribed';
+    signal.set('unsubscribed');
 
     expect(values).toEqual(['hello world', 'world world']);
   });
@@ -83,7 +83,7 @@ wrappers.forEach(({ name, atom }) => {
       values.push(value);
     });
 
-    signal.value = notCall2;
+    signal.set(notCall2);
 
     // Wait for the next tick.
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -105,11 +105,11 @@ wrappers.forEach(({ name, atom }) => {
       values.push(value);
     });
 
-    signal.value = 'world';
+    signal.set('world');
 
     unsubscribe();
 
-    signal.value = 'unsubscribed';
+    signal.set('unsubscribed');
 
     expect(values).toEqual(['hello', 'world']);
   });

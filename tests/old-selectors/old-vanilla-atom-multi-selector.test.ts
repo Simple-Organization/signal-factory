@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { atom } from '../../src/atoms/atom';
+import { atom } from './old-value-atom';
 import { oldSelector as selector } from './old-vanilla-atom-multi-selector';
 import { Atom } from './class-atom';
 import { oldSelector as classSelector } from './old-vanilla-class-atom-multi-selector';

@@ -1,10 +1,10 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import type { WritableSignal } from '..';
 import { signal } from '@angular/core';
 
 //
 //
 
-export function signalWrapper<T>(initial: T): OldSignal<T> {
+export function signalWrapper<T>(initial: T): WritableSignal<T> {
   const _signal = signal<T>(initial);
 
   const callbacks = new Set<(value: T) => void>();
@@ -17,18 +17,27 @@ export function signalWrapper<T>(initial: T): OldSignal<T> {
     };
   };
 
+  //
+  //
+
+  function get() {
+    return _signal();
+  }
+
+  //
+  //
+
+  function set(newValue: T) {
+    _signal.set(newValue);
+
+    for (const callback of callbacks) {
+      callback(newValue);
+    }
+  }
+
   return {
-    get value() {
-      return _signal();
-    },
-    set value(newValue) {
-      _signal.set(newValue);
-
-      for (const callback of callbacks) {
-        callback(newValue);
-      }
-    },
-
+    get,
     subscribe,
+    set,
   };
 }

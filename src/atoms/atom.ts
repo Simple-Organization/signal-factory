@@ -1,12 +1,15 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import { WritableSignal } from '..';
 import { _is } from '../utils';
 
 //
 //
 
-export function atom<T>(initial: T, is = _is): OldSignal<T> {
+export function atom<T>(initial: T, is = _is): WritableSignal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
+
+  //
+  //
 
   const subscribe = (callback: (value: T) => void) => {
     callback(value);
@@ -16,23 +19,33 @@ export function atom<T>(initial: T, is = _is): OldSignal<T> {
     };
   };
 
-  return {
-    get value() {
-      return value;
-    },
-    set value(newValue) {
-      if (is(value, newValue)) {
-        return;
-      }
+  //
+  //
 
-      value = newValue;
-      for (const callback of callbacks) {
-        callback(value);
-      }
-    },
+  function get() {
+    return value;
+  }
+
+  //
+  //
+
+  function set(newValue: T) {
+    if (is(value, newValue)) {
+      return;
+    }
+
+    value = newValue;
+    for (const callback of callbacks) {
+      callback(value);
+    }
+  }
+
+  //
+  //
+
+  return {
+    get,
     subscribe,
-    get count() {
-      return callbacks.size;
-    },
+    set,
   };
 }

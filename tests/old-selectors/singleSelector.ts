@@ -1,5 +1,5 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
-import { _is } from '../utils';
+import type { OldSignal } from './OldSignal';
+import { _is } from '../../src/utils';
 
 //
 //

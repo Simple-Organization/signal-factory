@@ -1,6 +1,6 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
-import { _is } from '../utils';
-import { oldSignalFactory } from '../../tests/old-selectors/oldSignalFactory';
+import type { OldSignal } from './OldSignal';
+import { _is } from '../../src/utils';
+import { oldSignalFactory } from './oldSignalFactory';
 
 //
 //
@@ -105,6 +105,18 @@ export function multiSelector<T>(
         }
       }
     };
+  }
+
+  //
+  //
+
+  function get() {
+    if (!hasValue) {
+      firstGet();
+    } else if (numSubscribers === 0) {
+      return getValue();
+    }
+    return internal.value;
   }
 
   //

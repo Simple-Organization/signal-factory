@@ -1,10 +1,10 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import type { WritableSignal } from '..';
 import { createSignal } from 'solid-js';
 
 //
 //
 
-export function signal<T>(initial: T): OldSignal<T> {
+export function signal<T>(initial: T): WritableSignal<T> {
   let _value = initial;
   const [value, setValue] = createSignal<T>(initial);
 
@@ -18,23 +18,32 @@ export function signal<T>(initial: T): OldSignal<T> {
     };
   };
 
+  //
+  //
+
+  function get() {
+    return value();
+  }
+
+  //
+  //
+
+  function set(newValue: T) {
+    _value = newValue;
+    if (typeof newValue === 'function') {
+      setValue(() => newValue);
+    } else {
+      setValue<any>(newValue);
+    }
+
+    for (const callback of callbacks) {
+      callback(newValue);
+    }
+  }
+
   return {
-    get value() {
-      return value();
-    },
-    set value(newValue) {
-      _value = newValue;
-      if (typeof newValue === 'function') {
-        setValue(() => newValue);
-      } else {
-        setValue<any>(newValue);
-      }
-
-      for (const callback of callbacks) {
-        callback(newValue);
-      }
-    },
-
+    get,
     subscribe,
+    set,
   };
 }

@@ -1,40 +1,131 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
-import { MultiSelector, SingleSelector } from '..';
+import { ReadableSignal, signalFactory } from '..';
+import { _is } from '../utils';
 
 //
-
-/** One or more values from `Signal` stores. */
-type SignalValue<T> =
-  T extends OldSignal<infer U>
-    ? U
-    : { [K in keyof T]: T[K] extends OldSignal<infer U> ? U : never };
-
-//
-
-export function selector<T extends OldSignal<any>, U>(
-  from: T,
-  getter: (value: SignalValue<T>) => U,
-  is?: typeof Object.is,
-): OldSignal<U>;
-
 //
 
 export function selector<T>(
-  getter: (get: <U>(signal: OldSignal<U>) => U) => T,
-  is?: typeof Object.is,
-): OldSignal<T>;
+  getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
+  is = _is,
+): ReadableSignal<T> {
+  let from: ReadableSignal<any>[] | undefined;
+  let values: any[] | undefined;
 
-//
-//
+  const internal = signalFactory<T>(undefined as any);
 
-export function selector(
-  arg1: OldSignal<any> | ((get: <U>(signal: OldSignal<U>) => U) => any),
-  arg2?: ((value: any) => any) | typeof Object.is,
-  arg3?: typeof Object.is,
-): OldSignal<any> {
-  if (typeof arg1 === 'function') {
-    return new MultiSelector(arg1, arg2 as typeof Object.is);
+  let unsubscribes: (() => void)[] | undefined;
+  let numSubscribers = 0;
+  let hasValue = false;
+
+  //
+  //
+
+  function getValue(): any {
+    values = [];
+
+    for (const signal of from!) {
+      values.push(signal.get());
+    }
+
+    internal.set(getter((signal) => signal.get()));
+    return internal.get();
   }
 
-  return new SingleSelector(arg1, arg2 as (value: any) => any, arg3);
+  //
+  //
+
+  function firstGet(): any {
+    from = [];
+
+    const getMethod = (signal: ReadableSignal<any>) => {
+      if (!from!.includes(signal)) {
+        from!.push(signal);
+      }
+      return signal.get();
+    };
+
+    values = [];
+
+    for (const signal of from!) {
+      values.push(signal.get());
+    }
+
+    internal.set(getter(getMethod));
+
+    hasValue = true;
+  }
+
+  //
+  //
+
+  function subscribe(callback: (value: any) => void) {
+    if (!hasValue) {
+      firstGet();
+    }
+
+    if (!unsubscribes) {
+      let firstSubscribe = true;
+      unsubscribes = [];
+
+      for (let i = 0; i < from!.length; i++) {
+        const unsub = from![i].subscribe((signalValue) => {
+          if (firstSubscribe) {
+            return;
+          }
+
+          values![i] = signalValue;
+          internal.set(getter((signal) => signal.get()));
+        });
+
+        unsubscribes.push(unsub);
+      }
+
+      firstSubscribe = false;
+    }
+
+    //
+    //
+
+    const unsub = internal.subscribe(callback);
+
+    numSubscribers++;
+
+    //
+    //
+
+    return () => {
+      unsub();
+      numSubscribers--;
+
+      if (numSubscribers === 0) {
+        for (const unsubscribe of unsubscribes!) {
+          unsubscribe();
+          unsubscribes = undefined;
+        }
+      }
+    };
+  }
+
+  //
+  //
+
+  function get() {
+    if (!hasValue) {
+      firstGet();
+    } else if (numSubscribers === 0) {
+      return getValue();
+    }
+    return internal.get();
+  }
+
+  //
+  //
+
+  return {
+    get,
+    subscribe,
+    get count() {
+      return numSubscribers;
+    },
+  };
 }

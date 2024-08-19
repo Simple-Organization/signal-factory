@@ -1,11 +1,25 @@
-import type { OldSignal } from '../../tests/old-selectors/OldSignal';
+import type { WritableSignal } from '..';
 import { type Ref, ref, watch } from 'vue';
 
 //
 //
 
-export function signal<T>(initial: T): OldSignal<T> {
+export function signal<T>(initial: T): WritableSignal<T> {
   const _signal: any = ref(initial);
+
+  //
+  //
+
+  function get() {
+    return _signal.value;
+  }
+
+  //
+  //
+
+  function set(newValue: T) {
+    _signal.value = newValue;
+  }
 
   //
   // We use "this" to save memory by not creating a new function for each signal created
@@ -13,11 +27,13 @@ export function signal<T>(initial: T): OldSignal<T> {
     this: Ref<T>,
     callback: (value: T) => void,
   ): () => void {
-    callback(this.value);
-    return watch(this, callback);
+    callback(_signal.value);
+    return watch(_signal, callback);
   }
 
-  _signal.subscribe = subscribe;
-
-  return _signal;
+  return {
+    get,
+    subscribe,
+    set,
+  };
 }

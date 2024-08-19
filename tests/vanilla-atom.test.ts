@@ -1,343 +1,202 @@
 import { test, expect } from '@playwright/test';
 import { atom } from '../src/atoms/atom';
-import { Atom } from './old-selectors/class-atom';
-import { multiSelector as multiSelector } from '../src/selector/multiSelector';
-import { MultiSelector as MultiClassSelector } from '../src';
 import { setSignalFactory } from '../src';
-import { selector as defaultSelector } from '../src/selector/selector';
-import { singleSelector } from '../src/selector/singleSelector';
-import { SingleSelector } from '../src';
+import { selector } from '../src/selector/selector';
 
 //
 //
 
-const atoms = [
-  { name: 'vanilla atom', atom, singleSelector, multiSelector },
-  {
-    name: 'vanilla class atom',
-    // @ts-ignore
-    atom: ((...args: any[]) => new Atom(...args)) as typeof atom,
-    singleSelector: ((...args: any[]) =>
-      // @ts-ignore
-      new SingleSelector(...args)) as typeof singleSelector,
-    multiSelector: ((...args: any[]) =>
-      // @ts-ignore
-      new MultiClassSelector(...args)) as typeof multiSelector,
-  },
-  {
-    name: 'default selector',
-    atom,
-    singleSelector: defaultSelector,
-    multiSelector: defaultSelector,
-  },
-];
+test.describe('vanilla atom', () => {
+  //
+  //
 
-//
-//
+  test('atom must be created and unsubscribed normally', () => {
+    const signal = atom('hello');
 
-atoms.forEach(({ name, atom, singleSelector, multiSelector }) => {
-  test.describe(name, () => {
-    //
-    //
+    const values: string[] = [];
 
-    test('atom must be created and unsubscribed normally', () => {
-      const signal = atom('hello');
-
-      const values: string[] = [];
-
-      const unsubscribe = signal.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello', 'world']);
+    const unsubscribe = signal.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal.set('world');
 
-    test('If the same value is given to the atom, it must not reupdate', () => {
-      const signal = atom('hello');
+    unsubscribe();
 
-      const values: string[] = [];
+    signal.set('unsubscribed');
 
-      const unsubscribe = signal.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-      signal.value = 'world';
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello', 'world']);
-    });
-
-    //
-    //
-
-    test('atom should reupdate if is return false', () => {
-      const signal = atom('hello', () => false);
-
-      const values: string[] = [];
-
-      const unsubscribe = signal.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-      signal.value = 'world';
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello', 'world', 'world', 'world']);
-    });
+    expect(values).toEqual(['hello', 'world']);
   });
 
   //
   //
 
-  test.describe(name + ': single selector', () => {
-    //
-    //
+  test('If the same value is given to the atom, it must not reupdate', () => {
+    const signal = atom('hello');
 
-    test('single selector must be created and unsubscribed normally', () => {
-      const signal = atom('hello');
-      const _selector = singleSelector(signal, (value1) => value1 + '2');
+    const values: string[] = [];
 
-      const values: string[] = [];
-
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello2', 'world2']);
+    const unsubscribe = signal.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal.set('world');
+    signal.set('world');
+    signal.set('world');
 
-    test('If the atom have its value updated, but no one as subscribed to the single selector, it must keep sync', () => {
-      const signal = atom('hello');
-      const _selector = singleSelector(signal, (value1) => value1 + '2');
+    unsubscribe();
 
-      expect(_selector.value).toBe('hello2');
+    signal.set('unsubscribed');
 
-      signal.value = 'world';
-
-      expect(_selector.value).toBe('world2');
-    });
-
-    //
-    //
-
-    test('If the same value is given to vanilla single selector factory, it must not reupdate', () => {
-      const signal = atom('hello');
-      const _selector = singleSelector(signal, (value) => value + 1);
-
-      const values: string[] = [];
-
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-      signal.value = 'world';
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello1', 'world1']);
-    });
-
-    //
-    //
-
-    test('If the atom reupdate the single selector should not reupdate', () => {
-      const signal = atom('hello', () => false);
-      const _selector = singleSelector(signal, (value) => value + 1);
-
-      const values: string[] = [];
-
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal.value = 'world';
-      signal.value = 'world';
-      signal.value = 'world';
-
-      unsubscribe();
-
-      signal.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello1', 'world1']);
-    });
-
-    //
-    //
-
-    test('The single selector must subscribe lazily', () => {
-      const signal = atom('hello');
-
-      let count = 0;
-
-      const _selector = singleSelector(signal, (value) => {
-        count++;
-        return value + 1;
-      });
-
-      expect(count).toBe(0);
-
-      const unsubscribe = _selector.subscribe(() => {});
-
-      expect(count).toBe(1);
-
-      unsubscribe();
-    });
+    expect(values).toEqual(['hello', 'world']);
   });
 
   //
   //
 
-  test.describe(name + ': multi selector', () => {
-    setSignalFactory(atom);
+  test('atom should reupdate if is return false', () => {
+    const signal = atom('hello', () => false);
 
-    //
-    //
+    const values: string[] = [];
 
-    test('multi selector must be created and unsubscribed normally', () => {
-      const signal1 = atom('hello');
-      const signal2 = atom(2);
-      const _selector = multiSelector((get) => get(signal1) + get(signal2));
-
-      const values: string[] = [];
-
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
-
-      signal1.value = 'world';
-      signal2.value = 3;
-
-      unsubscribe();
-
-      signal1.value = 'unsubscribed';
-
-      expect(values).toEqual(['hello2', 'world2', 'world3']);
+    const unsubscribe = signal.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal.set('world');
+    signal.set('world');
+    signal.set('world');
 
-    test('If the atom have its value updated, but no one as subscribed to the multi selector, it must keep sync', () => {
-      const signal1 = atom('hello');
-      const signal2 = atom(2);
-      const _selector = multiSelector((get) => get(signal1) + get(signal2));
+    unsubscribe();
 
-      expect(_selector.value).toBe('hello2');
+    signal.set('unsubscribed');
 
-      signal1.value = 'world';
+    expect(values).toEqual(['hello', 'world', 'world', 'world']);
+  });
+});
 
-      expect(_selector.value).toBe('world2');
+//
+//
+
+test.describe('selector', () => {
+  setSignalFactory(atom);
+
+  //
+  //
+
+  test('multi selector must be created and unsubscribed normally', () => {
+    const signal1 = atom('hello');
+    const signal2 = atom(2);
+    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+
+    const values: string[] = [];
+
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal1.set('world');
+    signal2.set(3);
 
-    test('If the same value is given to vanilla multi selector factory, it must not reupdate', () => {
-      const signal1 = atom('hello');
-      const signal2 = atom(2);
-      const _selector = multiSelector((get) => get(signal1) + get(signal2));
+    unsubscribe();
 
-      const values: string[] = [];
+    signal1.set('unsubscribed');
+    signal2.set('unsubscribed' as any);
 
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
+    expect(values).toEqual(['hello2', 'world2', 'world3']);
+  });
 
-      signal1.value = 'world';
-      signal1.value = 'world';
-      signal1.value = 'world';
-      signal2.value = 3;
-      signal2.value = 3;
-      signal2.value = 3;
+  //
+  //
 
-      unsubscribe();
+  test('If the atom have its value updated, but no one as subscribed to the multi selector, it must keep sync', () => {
+    const signal1 = atom('hello');
+    const signal2 = atom(2);
+    const _selector = selector((get) => get(signal1) + '' + get(signal2));
 
-      signal1.value = 'unsubscribed';
+    expect(_selector.get()).toBe('hello2');
 
-      expect(values).toEqual(['hello2', 'world2', 'world3']);
+    signal1.set('world');
+
+    expect(_selector.get()).toBe('world2');
+  });
+
+  //
+  //
+
+  test('If the same value is given to vanilla multi selector factory, it must not reupdate', () => {
+    const signal1 = atom('hello');
+    const signal2 = atom(2);
+    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+
+    const values: string[] = [];
+
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal1.set('world');
+    signal1.set('world');
+    signal1.set('world');
+    signal2.set(3);
+    signal2.set(3);
+    signal2.set(3);
 
-    test('If the atom reupdate the multi selector should not reupdate', () => {
-      const signal1 = atom('hello', () => false);
-      const signal2 = atom(2, () => false);
-      const _selector = multiSelector((get) => get(signal1) + get(signal2));
+    unsubscribe();
 
-      const values: string[] = [];
+    signal1.set('unsubscribed');
 
-      const unsubscribe = _selector.subscribe((value) => {
-        values.push(value);
-      });
+    expect(values).toEqual(['hello2', 'world2', 'world3']);
+  });
 
-      signal1.value = 'world';
-      signal1.value = 'world';
-      signal1.value = 'world';
-      signal2.value = 3;
-      signal2.value = 3;
-      signal2.value = 3;
+  //
+  //
 
-      unsubscribe();
+  test('If the atom reupdate the multi selector should not reupdate', () => {
+    const signal1 = atom('hello', () => false);
+    const signal2 = atom(2, () => false);
+    const _selector = selector((get) => get(signal1) + '' + get(signal2));
 
-      signal1.value = 'unsubscribed';
+    const values: string[] = [];
 
-      expect(values).toEqual(['hello2', 'world2', 'world3']);
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
     });
 
-    //
-    //
+    signal1.set('world');
+    signal1.set('world');
+    signal1.set('world');
+    signal2.set(3);
+    signal2.set(3);
+    signal2.set(3);
 
-    test('The multi selector must subscribe lazily', () => {
-      const signal1 = atom('hello');
-      const signal2 = atom(2);
+    unsubscribe();
 
-      let count = 0;
+    signal1.set('unsubscribed');
 
-      const _selector = multiSelector((get) => {
-        count++;
-        return get(signal1) + get(signal2);
-      });
+    expect(values).toEqual(['hello2', 'world2', 'world3']);
+  });
 
-      expect(count).toBe(0);
+  //
+  //
 
-      const unsubscribe = _selector.subscribe(() => {});
+  test('The multi selector must subscribe lazily', () => {
+    const signal1 = atom('hello');
+    const signal2 = atom(2);
 
-      expect(count).toBe(1);
+    let count = 0;
 
-      unsubscribe();
+    const _selector = selector((get) => {
+      count++;
+      return get(signal1) + '' + get(signal2);
     });
+
+    expect(count).toBe(0);
+
+    const unsubscribe = _selector.subscribe(() => {});
+
+    expect(count).toBe(1);
+
+    unsubscribe();
   });
 });
