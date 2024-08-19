@@ -11,7 +11,7 @@ export function selector<T>(
   let from: ReadableSignal<any>[] | undefined;
   let values: any[] | undefined;
 
-  const internal = signalFactory<T>(undefined as any);
+  const internal = signalFactory<T>(undefined as any, is);
 
   let unsubscribes: (() => void)[] | undefined;
   let numSubscribers = 0;

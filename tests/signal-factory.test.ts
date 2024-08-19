@@ -17,16 +17,30 @@ test('Must set the signal', () => {
       };
     };
 
+    //
+    //
+  
+    function get() {
+      return value;
+    }
+  
+    //
+    //
+  
+    function set(newValue: any) {
+      if (Object.is(value, newValue)) {
+        return;
+      }
+  
+      value = newValue;
+      for (const callback of callbacks) {
+        callback(value);
+      }
+    }
+
     return {
-      get value() {
-        return value;
-      },
-      set value(newValue) {
-        value = newValue;
-        for (const callback of callbacks) {
-          callback(value);
-        }
-      },
+      get,
+      set,
       subscribe,
     };
   };

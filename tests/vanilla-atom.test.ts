@@ -199,4 +199,43 @@ test.describe('selector', () => {
 
     unsubscribe();
   });
+
+  //
+  //
+
+  test('If the atom reupdate the and the selector is set to false it should reupdate', () => {
+    const signal1 = atom('hello', () => false);
+    const signal2 = atom(2, () => false);
+    const _selector = selector(
+      (get) => get(signal1) + '' + get(signal2),
+      () => false,
+    );
+
+    const values: string[] = [];
+
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
+    });
+
+    signal1.set('world');
+    signal1.set('world');
+    signal1.set('world');
+    signal2.set(3);
+    signal2.set(3);
+    signal2.set(3);
+
+    unsubscribe();
+
+    signal1.set('unsubscribed');
+
+    expect(values).toEqual([
+      'hello2',
+      'world2',
+      'world2',
+      'world2',
+      'world3',
+      'world3',
+      'world3',
+    ]);
+  });
 });
