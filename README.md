@@ -1,18 +1,6 @@
 # signal-factory
 
-**signal-factory** é uma biblioteca que possui somente dois métodos `setSignalFactory` e `signalFactory`
-
-Aqui está o código JavaScript dele compilado:
-
-```js
-var signalFactory = () => {
-  throw new Error('Signal factory not set');
-};
-function setSignalFactory(factory) {
-  signalFactory = factory;
-}
-export { setSignalFactory, signalFactory };
-```
+**signal-factory** é uma biblioteca framework agnostica usada para criar bibliotecas com `state management` que não precisam definir qual framework elas estão utilizando, ou seja, para criar outras biblitecas agnósticas
 
 Tipagem de um signal
 
@@ -20,6 +8,7 @@ Tipagem de um signal
 type Signal<T = any> = {
   value: T;
   subscribe: (callback: (value: T) => void) => () => void;
+  count?: number; // Opcional para testes
 };
 ```
 
@@ -33,6 +22,26 @@ O mais importante é entender o conceito por trás do **signal-factory** para ev
 
 Possui o método `setSignalFactory` para configurar o tipo de signal que será usado pela aplicação, podendo variar entre `Vue`, `Angular`, `SolidJS`, `PreactJS Signals`
 
+Por padrão o `setSignalFactory` usará o `Atom` interno uma classe muito bem testada e altamente performática, mas você pode modificar a hora que quiser
+
+## Selector
+
+A api do `signal-factory` oferece um `selector`
+
+```ts
+import { atom, selector } from 'signal-factory';
+
+const myAtom = atom(1);
+const myAtom2 = atom(2);
+
+// Para valores únicos
+const singleValue = selector(myAtom, (value) => value + 1);
+
+// Api conveniente para múltiplos valores
+// Inspirada do Recoil e Jotai
+const multiValue = selector((get) => get(myAtom) + get(myAtom2));
+```
+
 ### React
 
 React não tem suporte nativo para signals, porém é possível usar [@preact/signals-react](https://www.npmjs.com/package/@preact/signals-react) e usar igual ao [Preact](#preact)
@@ -45,7 +54,7 @@ import { signal } from '@preact/signals-react';
 setSignalFactory(signal);
 ```
 
-### Preact
+### Preact signals
 
 Adicionar para o preact com signals é muito simples, de onde a api foi inspirada
 
@@ -55,20 +64,27 @@ import { signal } from '@preact/signals';
 setSignalFactory(signal);
 ```
 
-Você pode usar também o hook do `signal-factory/preact` e ao invés de usar o `@preact/signals` você pode usar o `signal-factory/vanilla-atom` para criar os signals
+Você pode usar também o hook do `signal-factory/preact` e ao invés de usar o `@preact/signals` você pode usar o `atom` para criar os signals
 
 A vantagem dessa abordagem é que ela é explícita do que atom está sendo subscrito comparado `@preact/signals`, e ele também não modifica o `render` interno do preact, podendo salvar performance em algumas circunstancias
 
 ```tsx
-import { atom } from 'signal-factory/vanilla-atom';
+import { atom } from 'signal-factory';
 import { useSubSignals } from 'signal-factory/preact';
 
+// Já vem pré-definido com esse modo
 setSignalFactory(atom);
 
 //
 // Depois
 
+// Nesse exemplo estamos definindo o counter como global, mas é melhor defini-lo com context
+// É mais verboso com context, mas ajuda para testes e SSR, se você não usará testes ou SSR
+// sinta-se a vontade de usar como singleton
+
 const counter = atom(1);
+
+//
 
 export function Component() {
   useSubSignals(() => [someAtom]);
@@ -99,6 +115,7 @@ setSignalFactory(signal);
 export function signal<T>(initial: T): Signal<T> {
   const _signal: any = ref(initial);
 
+  // Adicionamos direto no objeto para economizar memória e performance
   _signal.subscribe = (cb: (newVal: any) => void) => {
     cb(_signal.value);
     return watch(_signal, cb);
@@ -110,15 +127,21 @@ export function signal<T>(initial: T): Signal<T> {
 
 ### Svelte e vanilla javascript
 
-Você pode usar o wrapper `vanilla-atom` do `signal-factory`
+Você pode simplesmente usar o `atom` que já vem pré-definido
 
-```ts
-import { atom } from 'signal-factory/vanilla-atom';
+Ou no caso do Svelte você pode adaptar o `writable`
 
-setSignalFactory(atom);
-```
+Lembrando que o `atom` que o `signal-factory`
 
-Ou simplesmente copie o código do wrapper abaixo
+Em testes com [benchmark](./tests/benchmark.ts)
+
+| **Benchmark**                                                                | **Atom**                     | **writable**                                                              | **Mais Rápido** | **Vantagem**                                           |
+| ---------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------- | --------------- | ------------------------------------------------------ |
+| **Atom creation vs writable creation**                                       | 52,569,399 ops/sec ±1.26%    | 64,395,425 ops/sec ±1.41%                                                 | writable        | "writable" é 1.22 vezes mais rápido que "Atom"         |
+| **Atom subscribe vs writable subscribe**                                     | 8,951,145 ops/sec ±0.97%     | 6,605,815 ops/sec ±0.73%                                                  | Atom            | "Atom" é 1.36 vezes mais rápido que "writable"         |
+| **Atom get value vs writable get value**                                     | 1,315,814,854 ops/sec ±0.09% | 6,188,902 ops/sec ±4.76%                                                  | Atom            | "Atom" é 212.61 vezes mais rápido que "writable"       |
+| **Atom set value vs writable set value**                                     | 116,469,300 ops/sec ±0.21%   | 136,845,993 ops/sec ±0.35% (set) <br> 140,188,375 ops/sec ±0.24% (update) | writable.update | "writable.update" é 1.20 vezes mais rápido que "Atom"  |
+| **Atom set value with subscription vs writable set value with subscription** | 72,181,055 ops/sec ±0.48%    | 6,000,664 ops/sec ±0.59% (set) <br> 5,853,505 ops/sec ±0.71% (update)     | Atom            | "Atom" é 12.33 vezes mais rápido que "writable.update" |
 
 ```ts
 setSignalFactory(atom);

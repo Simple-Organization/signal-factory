@@ -6,12 +6,13 @@ import { SingleSelector } from '../src/selector/SingleSelector-class';
 import { setSignalFactory, signalFactory } from '../src';
 import { multiSelector } from '../src/selector/multiSelector';
 import { MultiSelector } from '../src/selector/MultiSelector-class';
+import { writable, get } from 'svelte/store';
 
 //
 // Função para executar o benchmark
 async function runBenchmark() {
   let results: { name: string; hz: number; stats: any }[] = [];
-  const runAll = true;
+  const runAll = false;
 
   //
   //
@@ -217,7 +218,7 @@ async function runBenchmark() {
   //
   //
 
-  await newSuite(true, (suite) => {
+  await newSuite(false, (suite) => {
     console.log('\nBenchmarking multiSelector subscribe\n');
 
     setSignalFactory((initial) => atom(initial));
@@ -240,6 +241,123 @@ async function runBenchmark() {
       .add('Create multiSelector using Class', () => {
         const unsub = mult2.subscribe(() => {});
         unsub();
+      });
+  });
+
+  //
+  //
+  true
+  await newSuite(true, (suite) => {
+    console.log('\nBenchmarking Atom creation vs writable creation\n');
+
+    setSignalFactory((initial) => new Atom(initial));
+
+    suite
+      .add('Atom', () => {
+        signalFactory(0);
+      })
+      .add('writable', () => {
+        writable(0);
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking Atom subscribe vs writable subscribe\n');
+
+    setSignalFactory((initial) => new Atom(initial));
+
+    const noop = () => {};
+
+    suite
+      .add('Atom', () => {
+        const unsub = signalFactory(0).subscribe(noop);
+        unsub();
+      })
+      .add('writable', () => {
+        const unsub = writable(0).subscribe(noop);
+        unsub();
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking Atom get value vs writable get value\n');
+
+    setSignalFactory((initial) => new Atom(initial));
+
+    const _w = writable(0);
+    const _a = signalFactory(0);
+
+    suite
+      .add('Atom', () => {
+        _a.value;
+      })
+      .add('writable', () => {
+        get(_w);
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log('\nBenchmarking Atom set value vs writable set value\n');
+
+    setSignalFactory((initial) => new Atom(initial));
+
+    const _w = writable(0);
+    const _a = signalFactory(0);
+
+    suite
+      .add('Atom', () => {
+        _a.value = 1;
+        _a.value = 2;
+      })
+      .add('writable.set', () => {
+        _w.set(1);
+        _w.set(2);
+      })
+      .add('writable.update', () => {
+        _w.update((prev) => 1);
+        _w.update((prev) => 2);
+      });
+  });
+
+  //
+  //
+
+  await newSuite(false, (suite) => {
+    console.log(
+      '\nBenchmarking Atom set value with subscription vs writable set value with subscription\n',
+    );
+
+    setSignalFactory((initial) => new Atom(initial));
+
+    const _w = writable(0);
+    const _a = signalFactory(0);
+
+    const noop = () => {};
+
+    _a.subscribe(noop);
+    _w.subscribe(noop);
+
+    suite
+      .add('Atom', () => {
+        _a.value = 1;
+        _a.value = 2;
+      })
+      .add('writable.set', () => {
+        _w.set(1);
+        _w.set(2);
+      })
+      .add('writable.update', () => {
+        _w.update((prev) => 1);
+        _w.update((prev) => 2);
       });
   });
 }
