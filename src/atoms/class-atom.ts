@@ -1,4 +1,5 @@
 import { Signal } from '..';
+import { _is } from '../utils';
 
 //
 //
@@ -11,8 +12,9 @@ export class Atom<T> implements Signal<T> {
 
   constructor(
     initial: T,
-    public is: typeof Object.is = Object.is,
+    public is: typeof Object.is = _is,
   ) {
+    this.is = is;
     this._v = initial;
   }
 

@@ -1,4 +1,5 @@
 import { Signal, signalFactory } from '..';
+import { _is } from '../utils';
 
 //
 //
@@ -26,7 +27,7 @@ export class MultiSelector<T> {
 
   constructor(
     getter: (get: <U>(signal: Signal<U>) => U) => T,
-    public is: typeof Object.is = Object.is,
+    public is: typeof Object.is = _is,
   ) {
     this.getter = getter;
     this.internal = signalFactory<T>(undefined as any);

@@ -53,3 +53,15 @@ await esbuild.build({
   format: 'esm',
   external: ['preact/hooks'],
 });
+
+//
+//  Benchmarks
+//
+
+await esbuild.build({
+  entryPoints: ['./tests/benchmark.ts'],
+  bundle: true,
+  outfile: 'testing/benchmark.js',
+  format: 'esm',
+  external: ['benchmark'],
+});

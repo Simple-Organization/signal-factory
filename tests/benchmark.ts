@@ -7,12 +7,13 @@ import { setSignalFactory, signalFactory } from '../src';
 import { multiSelector } from '../src/selector/multiSelector';
 import { MultiSelector } from '../src/selector/MultiSelector-class';
 import { writable, get } from 'svelte/store';
+import { atom2 } from './experiments/atom-get';
 
 //
 // Função para executar o benchmark
 async function runBenchmark() {
   let results: { name: string; hz: number; stats: any }[] = [];
-  const runAll = false;
+  const runAll = true;
 
   //
   //
@@ -66,7 +67,7 @@ async function runBenchmark() {
   //
   //
 
-  await newSuite(false, (suite) => {
+  await newSuite(true, (suite) => {
     console.log('Benchmarking Atom creation\n');
 
     setSignalFactory((initial) => new Atom(initial));
@@ -74,6 +75,9 @@ async function runBenchmark() {
     suite
       .add('Create Atom using Function', () => {
         atom(0);
+      })
+      .add('Create Atom using Function 2', () => {
+        atom2(0);
       })
       .add('Create Atom using Class', () => {
         new Atom(0);
@@ -246,7 +250,7 @@ async function runBenchmark() {
 
   //
   //
-  true
+
   await newSuite(true, (suite) => {
     console.log('\nBenchmarking Atom creation vs writable creation\n');
 

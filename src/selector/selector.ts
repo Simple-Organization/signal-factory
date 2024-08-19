@@ -30,7 +30,7 @@ export function selector<T>(
 
 export function selector(
   arg1: Signal<any> | ((get: <U>(signal: Signal<U>) => U) => any),
-  arg2: ((value: any) => any) | typeof Object.is = Object.is,
+  arg2?: ((value: any) => any) | typeof Object.is,
   arg3?: typeof Object.is,
 ): Signal<any> {
   if (typeof arg1 === 'function') {

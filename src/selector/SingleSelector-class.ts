@@ -1,4 +1,5 @@
 import { Signal } from '..';
+import { _is } from '../utils';
 
 //
 //
@@ -20,7 +21,7 @@ export class SingleSelector<T> implements Signal<T> {
   constructor(
     from: Signal<T>,
     getter: (value: T) => T,
-    readonly is: typeof Object.is = Object.is,
+    readonly is: typeof Object.is = _is,
   ) {
     this._from = from;
     this._getter = getter;

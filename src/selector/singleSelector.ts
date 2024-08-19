@@ -1,4 +1,5 @@
 import { Signal } from '..';
+import { _is } from '../utils';
 
 //
 //
@@ -12,7 +13,7 @@ type SignalValue<T> = T extends Signal<infer U> ? U : never;
 export function singleSelector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
-  is: typeof Object.is = Object.is,
+  is: typeof Object.is = _is,
 ): Signal<U> {
   let value!: any;
   let unsubscribe: (() => void) | undefined;

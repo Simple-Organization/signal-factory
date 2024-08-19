@@ -1,9 +1,10 @@
 import { Signal } from '..';
+import { _is } from '../utils';
 
 //
 //
 
-export function atom<T>(initial: T, is = Object.is): Signal<T> {
+export function atom<T>(initial: T, is = _is): Signal<T> {
   const callbacks = new Set<(value: T) => void>();
   let value = initial;
 
@@ -30,5 +31,8 @@ export function atom<T>(initial: T, is = Object.is): Signal<T> {
       }
     },
     subscribe,
+    get count() {
+      return callbacks.size;
+    },
   };
 }
