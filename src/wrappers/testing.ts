@@ -7,7 +7,7 @@ export interface TestSignal<T = any> extends Signal<T> {
   /**
    * The current number of listeners subscribed to the signal/atom.
    */
-  lisCount: number;
+  count: number;
   /**
    * The history of the signal's values.
    */
@@ -42,7 +42,7 @@ export function testWrapper<T>(signal: Signal<T>): TestSignal<T> {
       }
     },
     subscribe,
-    get lisCount() {
+    get count() {
       return callbacks.size;
     },
     get history() {
