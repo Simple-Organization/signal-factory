@@ -4,8 +4,6 @@ import { singleSelector } from '../../src/selector/singleSelector';
 //
 //
 
-//
-
 export function oldSelector<T extends Signal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,

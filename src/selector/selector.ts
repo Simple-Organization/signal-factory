@@ -1,6 +1,4 @@
-import { Signal } from '..';
-import { MultiSelector } from './MultiSelector-class';
-import { SingleSelector } from './SingleSelector-class';
+import { MultiSelector, Signal, SingleSelector } from '..';
 
 //
 

@@ -1,5 +1,5 @@
-import { Signal } from '..';
-import { _is } from '../utils';
+import { Signal } from '../../src';
+import { _is } from '../../src/utils';
 
 //
 //

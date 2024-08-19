@@ -1,4 +1,4 @@
-import { Atom } from './atoms/class-atom';
+import { Atom } from '../tests/old-selectors/class-atom';
 
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
@@ -50,5 +50,5 @@ export let signalFactory: <T>(initial: T, is?: typeof Object.is) => Signal<T> =
 
 export { Atom };
 export { selector } from './selector/selector';
-export { MultiSelector } from './selector/MultiSelector-class';
-export { SingleSelector } from './selector/SingleSelector-class';
+export { MultiSelector } from '../tests/old-selectors/MultiSelector-class';
+export { SingleSelector } from '../tests/old-selectors/SingleSelector-class';

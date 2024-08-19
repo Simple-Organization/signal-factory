@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { atom } from '../src/atoms/atom';
-import { Atom } from '../src/atoms/class-atom';
+import { Atom } from './old-selectors/class-atom';
 import { multiSelector as multiSelector } from '../src/selector/multiSelector';
-import { MultiSelector as MultiClassSelector } from '../src/selector/MultiSelector-class';
+import { MultiSelector as MultiClassSelector } from '../src';
 import { setSignalFactory } from '../src';
 import { selector as defaultSelector } from '../src/selector/selector';
 import { singleSelector } from '../src/selector/singleSelector';
-import { SingleSelector } from '../src/selector/SingleSelector-class';
+import { SingleSelector } from '../src';
 
 //
 //

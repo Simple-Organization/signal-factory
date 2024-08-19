@@ -1,8 +1,12 @@
-# Old selectors
+# Old signals/atoms
 
-They was created before the new selector api came out, but we keep them here for tests and experiments
+That part we are keeping old designs of `atoms` and `selectors` used to make tests, experiments and benchmarks
 
-The new selector must use `signalFactory` to create its internal state
+## Old selectors
+
+They was created before the `new selector` api came out, but we keep them here for tests and experiments
+
+The `new selector` must use `signalFactory` to create its internal state
 
 And it need to have all functionalities as the previous `selectors`
 

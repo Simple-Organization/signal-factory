@@ -1,5 +1,4 @@
-import { Signal } from '../../src';
-import { SingleSelector } from '../../src/selector/SingleSelector-class';
+import { Signal, SingleSelector } from '../../src';
 
 //
 //

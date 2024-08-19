@@ -1,11 +1,9 @@
 import Benchmark from 'benchmark';
 import { atom } from '../src/atoms/atom';
-import { Atom } from '../src/atoms/class-atom';
+import { Atom } from './old-selectors/class-atom';
 import { singleSelector } from '../src/selector/singleSelector';
-import { SingleSelector } from '../src/selector/SingleSelector-class';
-import { setSignalFactory, signalFactory } from '../src';
+import { MultiSelector, setSignalFactory, signalFactory, SingleSelector } from '../src';
 import { multiSelector } from '../src/selector/multiSelector';
-import { MultiSelector } from '../src/selector/MultiSelector-class';
 import { writable, get } from 'svelte/store';
 import { atom2 } from './experiments/atom-get';
 
