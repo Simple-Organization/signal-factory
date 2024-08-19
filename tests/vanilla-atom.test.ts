@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { atom } from '../src/wrappers/vanilla-atom';
-import { Atom } from '../src/wrappers/vanilla-class-atom';
+import { atom } from '../src/atoms/atom';
+import { Atom } from '../src/atoms/class-atom';
 import { multiSelector as multiSelector } from '../src/selector/multiSelector';
 import { MultiSelector as MultiClassSelector } from '../src/selector/MultiSelector-class';
 import { setSignalFactory } from '../src';

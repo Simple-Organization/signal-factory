@@ -34,10 +34,6 @@
   "files": [
     "dist/index.d.ts",
     "dist/index.js",
-    "vanilla-atom/index.d.ts",
-    "vanilla-atom/index.js",
-    "vanilla-class-atom/index.d.ts",
-    "vanilla-class-atom/index.js",
     "vue/index.d.ts",
     "vue/index.js",
     "solid/index.d.ts",
@@ -53,18 +49,6 @@
       "default": "./dist/index.js",
       "browser": "./dist/index.js",
       "import": "./dist/index.js"
-    },
-    "./vanilla-atom": {
-      "types": "./vanilla-atom/index.d.ts",
-      "default": "./vanilla-atom/index.js",
-      "browser": "./vanilla-atom/index.js",
-      "import": "./vanilla-atom/index.js"
-    },
-    "./vanilla-class-atom": {
-      "types": "./vanilla-class-atom/index.d.ts",
-      "default": "./vanilla-class-atom/index.js",
-      "browser": "./vanilla-class-atom/index.js",
-      "import": "./vanilla-class-atom/index.js"
     },
     "./vue": {
       "types": "./vue/index.d.ts",

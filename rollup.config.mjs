@@ -13,16 +13,6 @@ const config = [
   //
 
   {
-    input: './dist/types/src/wrappers/vanilla-atom.d.ts',
-    output: [{ file: 'vanilla-atom/index.d.ts', format: 'es' }],
-    plugins: [dts()],
-  },
-  {
-    input: './dist/types/src/wrappers/vanilla-class-atom.d.ts',
-    output: [{ file: 'vanilla-class-atom/index.d.ts', format: 'es' }],
-    plugins: [dts()],
-  },
-  {
     input: './dist/types/src/wrappers/vue.d.ts',
     output: [{ file: 'vue/index.d.ts', format: 'es' }],
     plugins: [dts()],

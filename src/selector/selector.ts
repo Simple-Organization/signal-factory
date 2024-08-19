@@ -1,6 +1,6 @@
 import { Signal } from '..';
-import { multiSelector } from './multiSelector';
-import { singleSelector } from './singleSelector';
+import { MultiSelector } from './MultiSelector-class';
+import { SingleSelector } from './SingleSelector-class';
 
 //
 
@@ -34,8 +34,8 @@ export function selector(
   arg3?: typeof Object.is,
 ): Signal<any> {
   if (typeof arg1 === 'function') {
-    return multiSelector(arg1, arg2 as typeof Object.is);
+    return new MultiSelector(arg1, arg2 as typeof Object.is);
   }
 
-  return singleSelector(arg1, arg2 as (value: any) => any, arg3);
+  return new SingleSelector(arg1, arg2 as (value: any) => any, arg3);
 }

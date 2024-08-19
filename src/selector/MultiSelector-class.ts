@@ -4,16 +4,31 @@ import { Signal, signalFactory } from '..';
 //
 
 export class MultiSelector<T> {
+  /** @internal */
   private from: Signal<any>[] | undefined;
+  /** @internal */
   private values: any[] | undefined;
 
+  /** @internal */
   private internal: Signal<T>;
 
+  /** @internal */
   private unsubscribes: (() => void)[] | undefined;
+  /** @internal */
   private numSubscribers = 0;
+  /** @internal */
   private hasValue = false;
+  /** @internal */
+  getter: (get: <U>(signal: Signal<U>) => U) => T;
 
-  constructor(private getter: (get: <U>(signal: Signal<U>) => U) => T) {
+  //
+  //
+
+  constructor(
+    getter: (get: <U>(signal: Signal<U>) => U) => T,
+    public is: typeof Object.is = Object.is,
+  ) {
+    this.getter = getter;
     this.internal = signalFactory<T>(undefined as any);
   }
 
@@ -32,6 +47,7 @@ export class MultiSelector<T> {
   //
   //
 
+  /** @internal */
   private firstGet(): any {
     this.from = [];
 
@@ -101,6 +117,7 @@ export class MultiSelector<T> {
   //
   //
 
+  /** @internal */
   private getValue(): any {
     this.values = [];
 

@@ -24,21 +24,29 @@ export type Signal<T = any> = {
 };
 
 /**
- * A function that creates a explicit signal
- * @param initial - The initial value of the signal.
- * @returns A signal with the specified initial value.
- * @throws {Error} - If the signal factory is not set.
- */
-export let signalFactory: <T>(initial: T) => Signal<T> = () => {
-  throw new Error('Signal factory not set');
-};
-
-/**
  * Sets the signalFactory.
  * @param factory - Function that creates a signal with an initial value.
  */
 export function setSignalFactory(factory: (initial: any) => Signal): void {
   signalFactory = factory;
 }
+//
+//
+
+export function atom<T>(initial: T, is?: typeof Object.is): Signal<T> {
+  return signalFactory(initial, is);
+}
+
+/**
+ * A function that creates a explicit signal
+ * @param initial - The initial value of the signal.
+ * @returns A signal with the specified initial value.
+ * @throws {Error} - If the signal factory is not set.
+ */
+export let signalFactory: <T>(initial: T, is?: typeof Object.is) => Signal<T> =
+  atom;
 
 export { selector } from './selector/selector';
+export { MultiSelector } from './selector/MultiSelector-class';
+export { SingleSelector } from './selector/SingleSelector-class';
+export { Atom } from './atoms/class-atom';
