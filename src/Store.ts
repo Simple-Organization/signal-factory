@@ -1,5 +1,4 @@
-import { ReadableSignal, WritableSignal } from '.';
-import { SignalValue, SingleSelector } from './SingleSelector';
+import { WritableSignal } from '.';
 import { _is } from './utils';
 
 //
@@ -46,6 +45,6 @@ export class Store<T> implements WritableSignal<T> {
 //
 //
 
-export function store<T>(initial: T, is = _is): WritableSignal<T> {
+export function store<T>(initial: T, is = _is): Store<T> {
   return new Store(initial, is);
 }

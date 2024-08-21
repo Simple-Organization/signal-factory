@@ -1,16 +1,15 @@
 import { test, expect } from '@playwright/test';
-import { atom } from './experiments/atom';
-import { selector } from './experiments/selector';
+import { store, multiSelector } from '../src';
 
 //
 //
 
-test.describe('vanilla atom', () => {
+test.describe('Store', () => {
   //
   //
 
-  test('atom must be created and unsubscribed normally', () => {
-    const signal = atom('hello');
+  test('store must be created and unsubscribed normally', () => {
+    const signal = store('hello');
 
     const values: string[] = [];
 
@@ -30,8 +29,8 @@ test.describe('vanilla atom', () => {
   //
   //
 
-  test('If the same value is given to the atom, it must not reupdate', () => {
-    const signal = atom('hello');
+  test('If the same value is given to the store, it must not reupdate', () => {
+    const signal = store('hello');
 
     const values: string[] = [];
 
@@ -53,8 +52,8 @@ test.describe('vanilla atom', () => {
   //
   //
 
-  test('atom should reupdate if is return false', () => {
-    const signal = atom('hello', () => false);
+  test('store should reupdate if is return false', () => {
+    const signal = store('hello', () => false);
 
     const values: string[] = [];
 
@@ -77,14 +76,46 @@ test.describe('vanilla atom', () => {
 //
 //
 
-test.describe('selector', () => {
+test.describe('multiSelector', () => {
   //
   //
 
   test('multi selector must be created and unsubscribed normally', () => {
-    const signal1 = atom('hello');
-    const signal2 = atom(2);
-    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+    const signal1 = store('hello');
+    const signal2 = store(2);
+    const _selector = multiSelector((get) => get(signal1) + '' + get(signal2));
+
+    expect(signal1.count()).toBe(0);
+    expect(signal2.count()).toBe(0);
+    expect(_selector.count()).toBe(0);
+
+    const values: string[] = [];
+
+    const unsubscribe = _selector.subscribe((value) => {
+      values.push(value);
+    });
+
+    expect(signal1.count()).toBe(1);
+    expect(signal2.count()).toBe(1);
+    expect(_selector.count()).toBe(1);
+
+    signal1.set('world');
+    signal2.set(3);
+
+    unsubscribe();
+
+    expect(signal1.count()).toBe(0);
+    expect(signal2.count()).toBe(0);
+    expect(_selector.count()).toBe(0);
+  });
+
+  //
+  //
+
+  test('multi selector must deliver the correct values', () => {
+    const signal1 = store('hello');
+    const signal2 = store(2);
+    const _selector = multiSelector((get) => get(signal1) + '' + get(signal2));
 
     const values: string[] = [];
 
@@ -107,9 +138,9 @@ test.describe('selector', () => {
   //
 
   test('If the atom have its value updated, but no one as subscribed to the multi selector, it must keep sync', () => {
-    const signal1 = atom('hello');
-    const signal2 = atom(2);
-    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+    const signal1 = store('hello');
+    const signal2 = store(2);
+    const _selector = multiSelector((get) => get(signal1) + '' + get(signal2));
 
     expect(_selector.get()).toBe('hello2');
 
@@ -122,9 +153,9 @@ test.describe('selector', () => {
   //
 
   test('If the same value is given to vanilla multi selector factory, it must not reupdate', () => {
-    const signal1 = atom('hello');
-    const signal2 = atom(2);
-    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+    const signal1 = store('hello');
+    const signal2 = store(2);
+    const _selector = multiSelector((get) => get(signal1) + '' + get(signal2));
 
     const values: string[] = [];
 
@@ -150,9 +181,9 @@ test.describe('selector', () => {
   //
 
   test('If the atom reupdate the multi selector should not reupdate', () => {
-    const signal1 = atom('hello', () => false);
-    const signal2 = atom(2, () => false);
-    const _selector = selector((get) => get(signal1) + '' + get(signal2));
+    const signal1 = store('hello', () => false);
+    const signal2 = store(2, () => false);
+    const _selector = multiSelector((get) => get(signal1) + '' + get(signal2));
 
     const values: string[] = [];
 
@@ -178,12 +209,12 @@ test.describe('selector', () => {
   //
 
   test('The multi selector must subscribe lazily', () => {
-    const signal1 = atom('hello');
-    const signal2 = atom(2);
+    const signal1 = store('hello');
+    const signal2 = store(2);
 
     let count = 0;
 
-    const _selector = selector((get) => {
+    const _selector = multiSelector((get) => {
       count++;
       return get(signal1) + '' + get(signal2);
     });
@@ -201,9 +232,9 @@ test.describe('selector', () => {
   //
 
   test('If the atom reupdate the and the selector is set to false it should reupdate', () => {
-    const signal1 = atom('hello', () => false);
-    const signal2 = atom(2, () => false);
-    const _selector = selector(
+    const signal1 = store('hello', () => false);
+    const signal2 = store(2, () => false);
+    const _selector = multiSelector(
       (get) => get(signal1) + '' + get(signal2),
       () => false,
     );

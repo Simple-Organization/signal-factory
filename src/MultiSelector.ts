@@ -11,7 +11,7 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   #values: any[] | undefined;
   #value: any;
   #cbs: Set<(value: T) => void>;
-  #unsubscribes: (() => void)[] | undefined;
+  #unsubs: (() => void)[] | undefined;
   #hasValue: boolean;
 
   //
@@ -27,6 +27,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     this.#hasValue = false;
   }
 
+  //
+  //
+
   #getValue(): any {
     this.#values = [];
 
@@ -37,6 +40,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     this.#value = this.#getter((signal) => signal.get());
     return this.#value;
   }
+
+  //
+  //
 
   #firstGet(): any {
     this.#from = [];
@@ -54,6 +60,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     return this.#value;
   }
 
+  //
+  //
+
   subscribe(callback: (value: T) => void) {
     if (!this.#hasValue) {
       this.#firstGet();
@@ -62,8 +71,8 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     this.#cbs.add(callback);
     callback(this.#value);
 
-    if (!this.#unsubscribes) {
-      this.#unsubscribes = this.#from!.map((signal) =>
+    if (!this.#unsubs) {
+      this.#unsubs = this.#from!.map((signal) =>
         signal.subscribe(() => {
           const newValue = this.#getValue();
           if (!this.#is(newValue, this.#value)) {
@@ -76,22 +85,35 @@ export class MultiSelector<T> implements ReadableSignal<T> {
       );
     }
 
+    //
+    //
+
     return () => {
       this.#cbs.delete(callback);
-      if (this.#cbs.size === 0 && this.#unsubscribes) {
-        for (const unsubscribe of this.#unsubscribes) {
+      if (this.#cbs.size === 0 && this.#unsubs) {
+        for (const unsubscribe of this.#unsubs) {
           unsubscribe();
         }
-        this.#unsubscribes = undefined;
+        this.#unsubs = undefined;
       }
     };
   }
+
+  //
+  //
 
   get() {
     if (!this.#hasValue) {
       this.#firstGet();
     }
     return this.#value;
+  }
+
+  //
+  //
+
+  count() {
+    return this.#cbs.size;
   }
 }
 
@@ -101,6 +123,6 @@ export class MultiSelector<T> implements ReadableSignal<T> {
 export function multiSelector<T>(
   getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
   is: typeof Object.is = _is,
-): ReadableSignal<T> {
+): MultiSelector<T> {
   return new MultiSelector(getter, is);
 }
