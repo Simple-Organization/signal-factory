@@ -10,9 +10,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   #from: ReadableSignal<any>[] | undefined;
   #values: any[] | undefined;
   #value: any;
-  #cbs: Set<(value: T) => void>;
+  #cbs: Set<(value: T) => void> = new Set();
   #unsubs: (() => void)[] | undefined;
-  #hasValue: boolean;
+  #hasValue = false;
 
   //
   //
@@ -23,8 +23,6 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   ) {
     this.#getter = getter;
     this.#is = is;
-    this.#cbs = new Set();
-    this.#hasValue = false;
   }
 
   //
@@ -54,6 +52,13 @@ export class MultiSelector<T> implements ReadableSignal<T> {
       return signal.get();
     };
 
+    const values = [];
+
+    for (const signal of this.#from!) {
+      values.push(signal.get());
+    }
+
+    this.#values = values;
     this.#value = this.#getter(getMethod);
     this.#hasValue = true;
 
@@ -68,22 +73,43 @@ export class MultiSelector<T> implements ReadableSignal<T> {
       this.#firstGet();
     }
 
-    this.#cbs.add(callback);
-    callback(this.#value);
+    //
+    //
 
     if (!this.#unsubs) {
-      this.#unsubs = this.#from!.map((signal) =>
-        signal.subscribe(() => {
-          const newValue = this.#getValue();
-          if (!this.#is(newValue, this.#value)) {
-            this.#value = newValue;
-            for (const cb of this.#cbs) {
-              cb(this.#value);
-            }
+      let firstSubscribe = true;
+      this.#unsubs = [];
+
+      for (let i = 0; i < this.#from!.length; i++) {
+        const unsub = this.#from![i].subscribe((signalValue) => {
+          if (firstSubscribe) {
+            return;
           }
-        }),
-      );
+
+          if (this.#is(this.#values![i], signalValue)) {
+            return;
+          }
+
+          this.#values![i] = signalValue;
+          const value = this.#getter((signal) => signal.get());
+          this.#value = value;
+
+          for (const cb of this.#cbs) {
+            cb(value);
+          }
+        });
+
+        this.#unsubs.push(unsub);
+      }
+
+      firstSubscribe = false;
     }
+
+    //
+    //
+
+    this.#cbs.add(callback);
+    callback(this.#value);
 
     //
     //
@@ -105,6 +131,8 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   get() {
     if (!this.#hasValue) {
       this.#firstGet();
+    } else if (this.#cbs.size === 0) {
+      return this.#getValue();
     }
     return this.#value;
   }
