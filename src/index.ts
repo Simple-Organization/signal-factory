@@ -1,5 +1,3 @@
-import { atom } from '../tests/experiments/atom';
-
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
  */
@@ -34,29 +32,6 @@ export interface WritableSignal<T = any> extends ReadableSignal<T> {
   set: (value: T) => void;
 }
 
-/**
- * Sets the signalFactory.
- * @param factory - Function that creates a signal with an initial value.
- */
-export function setSignalFactory(
-  factory: (initial: any) => WritableSignal,
-): void {
-  signalFactory = factory;
-}
-
-/**
- * A function that creates a explicit signal
- * @param initial - The initial value of the signal.
- * @returns A signal with the specified initial value.
- * @throws {Error} - If the signal factory is not set.
- */
-export let signalFactory: <T>(
-  initial: T,
-  is?: typeof Object.is,
-) => WritableSignal<T> = atom;
-
-//
-
-export { atom };
-export { selector } from '../tests/experiments/selector';
 export { store, Store } from './Store';
+export { singleSelector as selector, SingleSelector } from './SingleSelector';
+export { multiSelector, MultiSelector } from './MultiSelector';

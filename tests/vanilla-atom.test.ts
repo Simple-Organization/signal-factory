@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { atom } from './experiments/atom';
-import { setSignalFactory } from '../src';
 import { selector } from './experiments/selector';
 
 //
@@ -79,8 +78,6 @@ test.describe('vanilla atom', () => {
 //
 
 test.describe('selector', () => {
-  setSignalFactory(atom);
-
   //
   //
 

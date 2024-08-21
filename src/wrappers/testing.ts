@@ -5,10 +5,6 @@ import type { WritableSignal } from '..';
  */
 export interface TestSignal<T = any> extends WritableSignal<T> {
   /**
-   * The current number of listeners subscribed to the signal/atom.
-   */
-  count: number;
-  /**
    * The history of the signal's values.
    */
   history: T[];
@@ -52,7 +48,7 @@ export function testWrapper<T>(signal: WritableSignal<T>): TestSignal<T> {
     get,
     subscribe,
     set,
-    get count() {
+    count() {
       return callbacks.size;
     },
     get history() {

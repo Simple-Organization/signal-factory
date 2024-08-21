@@ -38,14 +38,6 @@ export class Store<T> implements WritableSignal<T> {
     }
   }
 
-  selector<T extends ReadableSignal<any>, U>(
-    from: T,
-    getter: (value: SignalValue<T>) => U,
-    is: typeof Object.is = _is,
-  ): SingleSelector<T, U> {
-    return new SingleSelector(from, getter, is);
-  }
-
   count() {
     return this.#cbs.size;
   }

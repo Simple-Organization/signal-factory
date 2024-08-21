@@ -1,5 +1,6 @@
-import { ReadableSignal, signalFactory } from '../../src';
+import { ReadableSignal } from '../../src';
 import { _is } from '../../src/utils';
+import { atom } from './atom';
 
 //
 //
@@ -11,7 +12,7 @@ export function selector<T>(
   let from: ReadableSignal<any>[] | undefined;
   let values: any[] | undefined;
 
-  const internal = signalFactory<T>(undefined as any, is);
+  const internal = atom<T>(undefined as any, is);
 
   let unsubscribes: (() => void)[] | undefined;
   let numSubscribers = 0;
