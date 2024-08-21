@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { atom } from '../src/atoms/atom';
+import { atom } from './experiments/atom';
 import { setSignalFactory } from '../src';
-import { selector } from '../src/selector/selector';
+import { selector } from './experiments/selector';
 
 //
 //

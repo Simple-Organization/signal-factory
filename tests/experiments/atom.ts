@@ -1,5 +1,5 @@
-import { WritableSignal } from '..';
-import { _is } from '../utils';
+import { WritableSignal } from '../../src';
+import { _is } from '../../src/utils';
 
 //
 //

@@ -2,7 +2,7 @@ import test, { expect } from '@playwright/test';
 import { signal as vueSignal } from '../src/wrappers/vue';
 import { signal as solidSignal } from '../src/wrappers/solid';
 import { signalWrapper as angularSignal } from '../src/wrappers/angular';
-import { selector } from '../src/selector/selector';
+import { selector } from './experiments/selector';
 
 //
 //

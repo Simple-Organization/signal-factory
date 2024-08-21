@@ -1,5 +1,5 @@
 import Benchmark from 'benchmark';
-import { atom } from '../src/atoms/atom';
+import { atom } from './experiments/atom';
 import { Atom } from './old-selectors/class-atom';
 import { singleSelector } from './old-selectors/singleSelector';
 import { setSignalFactory, signalFactory } from '../src';

@@ -1,5 +1,5 @@
-import { ReadableSignal, signalFactory } from '..';
-import { _is } from '../utils';
+import { ReadableSignal, signalFactory } from '../../src';
+import { _is } from '../../src/utils';
 
 //
 //
