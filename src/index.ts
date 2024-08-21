@@ -1,4 +1,4 @@
-import { atom } from './atoms/atom';
+import { atom } from '../tests/experiments/atom';
 
 /**
  * Represents a signal/atom that holds a value and allows subscribing to changes.
@@ -58,4 +58,5 @@ export let signalFactory: <T>(
 //
 
 export { atom };
-export { selector } from './selector/selector';
+export { selector } from '../tests/experiments/selector';
+export { store, Store } from './Store';
