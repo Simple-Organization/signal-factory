@@ -15,19 +15,19 @@ export class Store<T> implements WritableSignal<T> {
     this.#is = is;
   }
 
-  subscribe = (callback: (value: T) => void) => {
+  subscribe(callback: (value: T) => void) {
     callback(this.#value);
     this.#cbs.add(callback);
     return () => {
       this.#cbs.delete(callback);
     };
-  };
+  }
 
-  get = () => {
+  get() {
     return this.#value;
-  };
+  }
 
-  set = (newValue: T) => {
+  set(newValue: T) {
     if (this.#is(this.#value, newValue)) {
       return;
     }
@@ -36,7 +36,7 @@ export class Store<T> implements WritableSignal<T> {
     for (const callback of this.#cbs) {
       callback(this.#value);
     }
-  };
+  }
 
   selector<T extends ReadableSignal<any>, U>(
     from: T,
@@ -46,7 +46,7 @@ export class Store<T> implements WritableSignal<T> {
     return new SingleSelector(from, getter, is);
   }
 
-  get count() {
+  count() {
     return this.#cbs.size;
   }
 }

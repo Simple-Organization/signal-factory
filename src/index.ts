@@ -21,7 +21,7 @@ export type ReadableSignal<T = any> = {
    *
    * May not be present depending on the signal set with `setSignalFactory`.
    */
-  count?: number;
+  count?: () => number;
 };
 
 /**

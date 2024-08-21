@@ -2,7 +2,7 @@ import Benchmark from 'benchmark';
 import { atom } from './experiments/atom';
 import { Atom } from './old-selectors/class-atom';
 import { singleSelector } from './old-selectors/singleSelector';
-import { setSignalFactory, signalFactory } from '../src';
+import { setSignalFactory, signalFactory, Store } from '../src';
 import { multiSelector } from './old-selectors/multiSelector';
 import { writable, get } from 'svelte/store';
 import { atom2 } from './experiments/atom-get';
@@ -13,7 +13,7 @@ import { MultiSelector } from './old-selectors/MultiSelector-class';
 // Função para executar o benchmark
 async function runBenchmark() {
   let results: { name: string; hz: number; stats: any }[] = [];
-  const runAll = true;
+  const runAll = false;
 
   //
   //
@@ -71,15 +71,18 @@ async function runBenchmark() {
     console.log('Benchmarking Atom creation\n');
 
     suite
-      .add('Create Atom using Function', () => {
-        atom(0);
+      // .add('Create Atom using Function', () => {
+      //   atom(0);
+      // })
+      // .add('Create Atom using Function 2', () => {
+      //   atom2(0);
+      // })
+      .add('Create Store', () => {
+        new Store(0);
       })
-      .add('Create Atom using Function 2', () => {
-        atom2(0);
-      })
-      .add('Create Atom using Class', () => {
-        new Atom(0);
-      });
+      // .add('Create Atom using Class', () => {
+      //   new Atom(0);
+      // });
   });
 
   //
