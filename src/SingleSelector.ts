@@ -33,7 +33,7 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
     this.#is = is;
   }
 
-  subscribe = (callback: (value: any) => void) => {
+  subscribe(callback: (value: any) => void) {
     if (!this.#hasValue) {
       this.#value = this.#getter(this.#from.get());
       this.#hasValue = true;
@@ -71,15 +71,21 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
         this.#unsub = undefined;
       }
     };
-  };
+  }
 
-  get = () => {
-    if (!this.#hasValue) {
-      this.#value = this.#getter(this.#from.get());
-      this.#hasValue = true;
+  get() {
+    if (!this.#unsub) {
+      return this.#getter(this.#from.get());
     }
     return this.#value;
-  };
+  }
+
+  //
+  //
+
+  count() {
+    return this.#cbs.size;
+  }
 }
 
 //
