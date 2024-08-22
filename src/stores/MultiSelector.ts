@@ -1,25 +1,56 @@
 import type { ReadableSignal } from 'signal-factory';
-import { _is } from './utils';
+import { _is, Comparator } from './utils';
 
 //
 //
 
 export class MultiSelector<T> implements ReadableSignal<T> {
-  _getter: (get: <U>(signal: ReadableSignal<U>) => U) => T;
-  _is: typeof Object.is;
-  _from: ReadableSignal<any>[] | undefined;
-  _values: any[] | undefined;
+  /**
+   * @internal
+   */
   _value: any;
+
+  /**
+   * @internal
+   */
+  _getter: (get: <U>(signal: ReadableSignal<U>) => U) => T;
+
+  /**
+   * @internal
+   */
+  _from: ReadableSignal<any>[] | undefined;
+
+  /**
+   * @internal
+   */
+  _values: any[] | undefined;
+
+  /**
+   * @internal
+   */
   _cbs: Set<(value: T) => void> = new Set();
+
+  /**
+   * @internal
+   */
   _unsubs: (() => void)[] | undefined;
+
+  /**
+   * @internal
+   */
   _hasValue = false;
+
+  /**
+   * @internal
+   */
+  _is: Comparator;
 
   //
   //
 
   constructor(
     getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
-    is: typeof Object.is = _is,
+    is: Comparator = _is,
   ) {
     this._getter = getter;
     this._is = is;
@@ -37,9 +68,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     return this._value;
   }
 
-  //
-  //
-
+  /**
+   * @internal
+   */
   _getValue(): any {
     this._values = [];
 
@@ -51,9 +82,9 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     return this._value;
   }
 
-  //
-  //
-
+  /**
+   * @internal
+   */
   _firstGet(): any {
     this._from = [];
 
@@ -143,7 +174,7 @@ export class MultiSelector<T> implements ReadableSignal<T> {
 
 export function multiSelector<T>(
   getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
-  is: typeof Object.is = _is,
+  is: Comparator = _is,
 ): MultiSelector<T> {
   return new MultiSelector(getter, is);
 }

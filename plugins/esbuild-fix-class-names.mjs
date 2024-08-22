@@ -18,7 +18,8 @@ export const convertClassPlugin = {
         js,
         contents
           .toString()
-          .replace(/var\s+(\w+)\s+=\s+class\s+\{/g, 'class $1 {'),
+          .replace(/var\s+(\w+)\s+=\s+class\s+\{/g, 'class $1 {') // Remove os var SomeClass = class {
+          .replace(/\/\*\*(\s|\*)*@internal\s*\*\/\s*/g, ''), // Remove os @internal
       );
     });
   },

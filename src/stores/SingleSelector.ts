@@ -1,5 +1,5 @@
 import type { ReadableSignal } from 'signal-factory';
-import { _is } from './utils';
+import { _is, Comparator } from './utils';
 
 //
 //
@@ -12,13 +12,40 @@ export type SignalValue<T> = T extends ReadableSignal<infer U> ? U : never;
 export class SingleSelector<T extends ReadableSignal<any>, U>
   implements ReadableSignal<U>
 {
-  _from: T;
-  _getter: (value: SignalValue<T>) => U;
+  /**
+   * @internal
+   */
   _value!: any;
+
+  /**
+   * @internal
+   */
+  _from: T;
+
+  /**
+   * @internal
+   */
+  _getter: (value: SignalValue<T>) => U;
+
+  /**
+   * @internal
+   */
   _unsub: (() => void) | undefined;
+
+  /**
+   * @internal
+   */
   _hasValue = false;
+
+  /**
+   * @internal
+   */
   _cbs = new Set<(value: any) => void>();
-  _is: typeof Object.is;
+
+  /**
+   * @internal
+   */
+  _is: Comparator;
 
   //
   //
@@ -26,7 +53,7 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
   constructor(
     from: T,
     getter: (value: SignalValue<T>) => U,
-    is: typeof Object.is = _is,
+    is: Comparator = _is,
   ) {
     this._from = from;
     this._getter = getter;
@@ -87,7 +114,7 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
 export function singleSelector<T extends ReadableSignal<any>, U>(
   from: T,
   getter: (value: SignalValue<T>) => U,
-  is: typeof Object.is = _is,
+  is: Comparator = _is,
 ): ReadableSignal<U> {
   return new SingleSelector(from, getter, is);
 }

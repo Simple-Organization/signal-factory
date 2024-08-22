@@ -1,15 +1,26 @@
 import type { WritableSignal } from 'signal-factory';
-import { _is } from './utils';
+import { _is, Comparator } from './utils';
 
 //
 //
 
 export class Store<T> implements WritableSignal<T> {
-  _cbs: Set<(value: T) => void> = new Set();
+  /**
+   * @internal
+   */
   _value: T;
-  _is: (a: T, b: T) => boolean;
 
-  constructor(initial: T, is = _is) {
+  /**
+   * @internal
+   */
+  _cbs: Set<(value: T) => void> = new Set();
+
+  /**
+   * @internal
+   */
+  _is: Comparator;
+
+  constructor(initial: T, is: Comparator = _is) {
     this._value = initial;
     this._is = is;
   }
@@ -41,6 +52,6 @@ export class Store<T> implements WritableSignal<T> {
 //
 //
 
-export function store<T>(initial: T, is = _is): Store<T> {
+export function store<T>(initial: T, is: Comparator = _is): Store<T> {
   return new Store(initial, is);
 }
