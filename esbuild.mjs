@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { convertClassPlugin } from './plugins/esbuild-fix-class-names.mjs';
 
 //
 //  Signal fatory
@@ -21,6 +22,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'store/index.js',
   format: 'esm',
+  plugins: [convertClassPlugin],
   external: ['signal-factory'],
 });
 

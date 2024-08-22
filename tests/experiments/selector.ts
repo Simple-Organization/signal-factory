@@ -122,16 +122,8 @@ export function selector<T>(
   //
   //
 
-  function count() {
-    return numSubscribers;
-  }
-
-  //
-  //
-
   return {
     get,
     subscribe,
-    count,
   };
 }
