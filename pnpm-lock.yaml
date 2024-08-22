@@ -35,6 +35,9 @@ importers:
       rollup-plugin-dts:
         specifier: ^6.1.1
         version: 6.1.1(rollup@4.20.0)(typescript@5.5.4)
+      signal-factory:
+        specifier: '*'
+        version: 1.0.0-next.5
       solid-js:
         specifier: '>=1.8'
         version: 1.8.20
@@ -678,6 +681,9 @@ packages:
     resolution: {integrity: sha512-rqEO6FZk8mv7Hyv4UCj3FD3b6Waqft605TLfsCe/BiaylRpyyMC0b+uA5TJKawX3KzMrdi3wsLbCaLplrQmBvQ==}
     engines: {node: '>=10'}
 
+  signal-factory@1.0.0-next.5:
+    resolution: {integrity: sha512-EPcO7CvAvHRCG3j4Q7AaLAHd/cnSUVkdcyt0sQbNBRNqpHaw4hdEfEBfAtkpTvsCO19kE5fj8G9P6SIaPgQBYg==}
+
   solid-js@1.8.20:
     resolution: {integrity: sha512-SsgaExCJ97mPm9WpAusjZ484Z8zTp8ggiueQOsrm81iAP7UaxaN+wiOgnPcJ9u6B2SQpoQ4FiDPAZBqVWi1V4g==}
 
@@ -1276,6 +1282,8 @@ snapshots:
       seroval: 1.1.1
 
   seroval@1.1.1: {}
+
+  signal-factory@1.0.0-next.5: {}
 
   solid-js@1.8.20:
     dependencies:

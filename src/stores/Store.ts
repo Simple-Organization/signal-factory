@@ -1,4 +1,4 @@
-import { WritableSignal } from '..';
+import type { WritableSignal } from 'signal-factory';
 import { _is } from './utils';
 
 //

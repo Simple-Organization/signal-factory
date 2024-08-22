@@ -1,4 +1,4 @@
-import { ReadableSignal } from '..';
+import type { ReadableSignal } from 'signal-factory';
 import { _is } from './utils';
 
 //

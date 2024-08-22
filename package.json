@@ -31,7 +31,8 @@
     "tsx": "^4.17.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.2",
-    "vue": ">=3"
+    "vue": ">=3",
+    "signal-factory": "*"
   },
   "files": [
     "dist/index.d.ts",

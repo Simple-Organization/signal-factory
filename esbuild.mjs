@@ -9,6 +9,7 @@ await esbuild.build({
   bundle: true,
   outdir: 'dist',
   format: 'esm',
+  external: ['signal-factory'],
 });
 
 //
@@ -20,6 +21,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'store/index.js',
   format: 'esm',
+  external: ['signal-factory'],
 });
 
 //
@@ -31,7 +33,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'vue/index.js',
   format: 'esm',
-  external: ['vue'],
+  external: ['vue', 'signal-factory'],
 });
 
 await esbuild.build({
@@ -39,7 +41,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'solid/index.js',
   format: 'esm',
-  external: ['solid-js'],
+  external: ['solid-js', 'signal-factory'],
 });
 
 await esbuild.build({
@@ -47,7 +49,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'angular/index.js',
   format: 'esm',
-  external: ['@angular/core'],
+  external: ['@angular/core', 'signal-factory'],
 });
 
 await esbuild.build({
@@ -55,6 +57,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'testing/index.js',
   format: 'esm',
+  external: ['signal-factory'],
 });
 
 //
@@ -66,7 +69,7 @@ await esbuild.build({
   bundle: true,
   outfile: 'preact/index.js',
   format: 'esm',
-  external: ['preact/hooks'],
+  external: ['preact/hooks', 'signal-factory'],
 });
 
 //
@@ -78,5 +81,5 @@ await esbuild.build({
   bundle: true,
   outfile: 'testing/benchmark.js',
   format: 'esm',
-  external: ['benchmark'],
+  external: ['benchmark', 'signal-factory'],
 });

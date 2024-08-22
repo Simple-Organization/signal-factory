@@ -1,4 +1,4 @@
-import type { WritableSignal } from '..';
+import type { WritableSignal } from 'signal-factory';
 
 /**
  * Wrapper for a signal/atom that adds additional properties for testing.

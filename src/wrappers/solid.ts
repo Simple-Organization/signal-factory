@@ -1,4 +1,4 @@
-import type { WritableSignal } from '..';
+import type { WritableSignal } from 'signal-factory';
 import { createSignal } from 'solid-js';
 
 //

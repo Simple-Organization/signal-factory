@@ -1,4 +1,4 @@
-import type { WritableSignal } from '..';
+import type { WritableSignal } from 'signal-factory';
 import { type Ref, ref, watch } from 'vue';
 
 //
