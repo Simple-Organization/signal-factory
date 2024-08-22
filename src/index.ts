@@ -13,13 +13,6 @@ export type ReadableSignal<T = any> = {
    * @returns A function that unsubscribes the callback from the signal/atom.
    */
   subscribe: (callback: (value: T) => void) => () => void;
-
-  /**
-   * The number of subscribers to the signal/atom for tests.
-   *
-   * May not be present depending on the signal set with `setSignalFactory`.
-   */
-  count?: () => number;
 };
 
 /**

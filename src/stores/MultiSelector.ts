@@ -5,14 +5,14 @@ import { _is } from './utils';
 //
 
 export class MultiSelector<T> implements ReadableSignal<T> {
-  #getter: (get: <U>(signal: ReadableSignal<U>) => U) => T;
-  #is: typeof Object.is;
-  #from: ReadableSignal<any>[] | undefined;
-  #values: any[] | undefined;
-  #value: any;
-  #cbs: Set<(value: T) => void> = new Set();
-  #unsubs: (() => void)[] | undefined;
-  #hasValue = false;
+  _getter: (get: <U>(signal: ReadableSignal<U>) => U) => T;
+  _is: typeof Object.is;
+  _from: ReadableSignal<any>[] | undefined;
+  _values: any[] | undefined;
+  _value: any;
+  _cbs: Set<(value: T) => void> = new Set();
+  _unsubs: (() => void)[] | undefined;
+  _hasValue = false;
 
   //
   //
@@ -21,85 +21,97 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
     is: typeof Object.is = _is,
   ) {
-    this.#getter = getter;
-    this.#is = is;
+    this._getter = getter;
+    this._is = is;
   }
 
   //
   //
 
-  #getValue(): any {
-    this.#values = [];
+  get() {
+    if (!this._hasValue) {
+      this._firstGet();
+    } else if (this._cbs.size === 0) {
+      return this._getValue();
+    }
+    return this._value;
+  }
 
-    for (const signal of this.#from!) {
-      this.#values.push(signal.get());
+  //
+  //
+
+  _getValue(): any {
+    this._values = [];
+
+    for (const signal of this._from!) {
+      this._values.push(signal.get());
     }
 
-    this.#value = this.#getter((signal) => signal.get());
-    return this.#value;
+    this._value = this._getter((signal) => signal.get());
+    return this._value;
   }
 
   //
   //
 
-  #firstGet(): any {
-    this.#from = [];
+  _firstGet(): any {
+    this._from = [];
 
     const getMethod = (signal: ReadableSignal<any>) => {
-      if (!this.#from!.includes(signal)) {
-        this.#from!.push(signal);
+      if (!this._from!.includes(signal)) {
+        this._from!.push(signal);
       }
       return signal.get();
     };
 
     const values = [];
 
-    for (const signal of this.#from!) {
+    for (const signal of this._from!) {
       values.push(signal.get());
     }
 
-    this.#values = values;
-    this.#value = this.#getter(getMethod);
-    this.#hasValue = true;
+    this._values = values;
+    this._value = this._getter(getMethod);
+    this._hasValue = true;
 
-    return this.#value;
+    return this._value;
   }
 
   //
   //
 
   subscribe(callback: (value: T) => void) {
-    if (!this.#hasValue) {
-      this.#firstGet();
+    if (!this._hasValue) {
+      this._firstGet();
     }
 
     //
     //
 
-    if (!this.#unsubs) {
+    if (!this._unsubs) {
       let firstSubscribe = true;
-      this.#unsubs = [];
+      this._unsubs = [];
 
-      for (let i = 0; i < this.#from!.length; i++) {
-        const unsub = this.#from![i].subscribe((signalValue) => {
+      for (let i = 0; i < this._from!.length; i++) {
+        const unsub = this._from![i].subscribe((signalValue) => {
           if (firstSubscribe) {
             return;
           }
 
-          if (this.#is(this.#values![i], signalValue)) {
+          if (this._is(this._values![i], signalValue)) {
             return;
           }
 
-          this.#values![i] = signalValue;
-          const value = this.#getter((signal) => signal.get());
-          this.#value = value;
+          this._values![i] = signalValue;
+          const value = this._getter((signal) => signal.get());
+          this._value = value;
 
-          for (const cb of this.#cbs) {
+          for (const cb of this._cbs) {
             cb(value);
           }
         });
 
-        this.#unsubs.push(unsub);
+        this._unsubs.push(unsub);
       }
 
       firstSubscribe = false;
@@ -108,40 +120,21 @@ export class MultiSelector<T> implements ReadableSignal<T> {
     //
     //
 
-    this.#cbs.add(callback);
-    callback(this.#value);
+    this._cbs.add(callback);
+    callback(this._value);
 
     //
     //
 
     return () => {
-      this.#cbs.delete(callback);
-      if (this.#cbs.size === 0 && this.#unsubs) {
-        for (const unsubscribe of this.#unsubs) {
+      this._cbs.delete(callback);
+      if (this._cbs.size === 0 && this._unsubs) {
+        for (const unsubscribe of this._unsubs) {
           unsubscribe();
         }
-        this.#unsubs = undefined;
+        this._unsubs = undefined;
       }
     };
-  }
-
-  //
-  //
-
-  get() {
-    if (!this.#hasValue) {
-      this.#firstGet();
-    } else if (this.#cbs.size === 0) {
-      return this.#getValue();
-    }
-    return this.#value;
-  }
-
-  //
-  //
-
-  count() {
-    return this.#cbs.size;
   }
 }
 

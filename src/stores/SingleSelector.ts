@@ -12,13 +12,13 @@ export type SignalValue<T> = T extends ReadableSignal<infer U> ? U : never;
 export class SingleSelector<T extends ReadableSignal<any>, U>
   implements ReadableSignal<U>
 {
-  #from: T;
-  #getter: (value: SignalValue<T>) => U;
-  #is: typeof Object.is;
-  #value!: any;
-  #unsub: (() => void) | undefined;
-  #hasValue = false;
-  #cbs = new Set<(value: any) => void>();
+  _from: T;
+  _getter: (value: SignalValue<T>) => U;
+  _value!: any;
+  _unsub: (() => void) | undefined;
+  _hasValue = false;
+  _cbs = new Set<(value: any) => void>();
+  _is: typeof Object.is;
 
   //
   //
@@ -28,63 +28,56 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
     getter: (value: SignalValue<T>) => U,
     is: typeof Object.is = _is,
   ) {
-    this.#from = from;
-    this.#getter = getter;
-    this.#is = is;
+    this._from = from;
+    this._getter = getter;
+    this._is = is;
+  }
+
+  get() {
+    if (!this._unsub) {
+      return this._getter(this._from.get());
+    }
+    return this._value;
   }
 
   subscribe(callback: (value: any) => void) {
-    if (!this.#hasValue) {
-      this.#value = this.#getter(this.#from.get());
-      this.#hasValue = true;
+    if (!this._hasValue) {
+      this._value = this._getter(this._from.get());
+      this._hasValue = true;
     }
 
-    if (!this.#unsub) {
+    if (!this._unsub) {
       let firstSubscribe = true;
 
-      this.#unsub = this.#from.subscribe((fromValue) => {
+      this._unsub = this._from.subscribe((fromValue) => {
         if (firstSubscribe) {
           firstSubscribe = false;
           return;
         }
 
-        const newValue = this.#getter(fromValue);
+        const newValue = this._getter(fromValue);
 
-        if (this.#is(newValue, this.#value)) {
+        if (this._is(newValue, this._value)) {
           return;
         }
 
-        this.#value = newValue;
-        for (const callback of this.#cbs) {
-          callback(this.#value);
+        this._value = newValue;
+        for (const callback of this._cbs) {
+          callback(this._value);
         }
       });
     }
 
-    this.#cbs.add(callback);
-    callback(this.#value);
+    this._cbs.add(callback);
+    callback(this._value);
 
     return () => {
-      this.#cbs.delete(callback);
-      if (this.#cbs.size === 0 && this.#unsub) {
-        this.#unsub();
-        this.#unsub = undefined;
+      this._cbs.delete(callback);
+      if (this._cbs.size === 0 && this._unsub) {
+        this._unsub();
+        this._unsub = undefined;
       }
     };
-  }
-
-  get() {
-    if (!this.#unsub) {
-      return this.#getter(this.#from.get());
-    }
-    return this.#value;
-  }
-
-  //
-  //
-
-  count() {
-    return this.#cbs.size;
   }
 }
 

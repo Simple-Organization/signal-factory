@@ -8,7 +8,6 @@ Tipagem de um signal
 type ReadableSignal<T = any> = {
   get: () => T;
   subscribe: (callback: (value: T) => void) => () => void;
-  count?: () => number;
 };
 
 interface WritableSignal<T = any> extends ReadableSignal<T> {
