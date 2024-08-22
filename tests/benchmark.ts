@@ -2,7 +2,7 @@ import Benchmark from 'benchmark';
 import { atom } from './experiments/atom';
 import { Atom } from './old-selectors/class-atom';
 import { singleSelector } from './old-selectors/singleSelector';
-import { setSignalFactory, signalFactory, Store } from '../src';
+import { Store } from '../src';
 import { multiSelector } from './old-selectors/multiSelector';
 import { writable, get } from 'svelte/store';
 import { atom2 } from './experiments/atom-get';
@@ -79,10 +79,10 @@ async function runBenchmark() {
       // })
       .add('Create Store', () => {
         new Store(0);
-      })
-      // .add('Create Atom using Class', () => {
-      //   new Atom(0);
-      // });
+      });
+    // .add('Create Atom using Class', () => {
+    //   new Atom(0);
+    // });
   });
 
   //

@@ -1,5 +1,5 @@
 import type { OldSignal } from './OldSignal';
-import { _is } from '../../src/utils';
+import { _is } from '../../src/stores/utils';
 
 //
 //
