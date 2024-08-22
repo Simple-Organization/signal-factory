@@ -3,8 +3,7 @@ dist
 *.tgz
 test-results
 
-vanilla-atom/*
-vanilla-class-atom/*
+store/*
 vue/*
 solid/*
 angular/*

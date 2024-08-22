@@ -1,4 +1,4 @@
-import { WritableSignal } from '.';
+import { WritableSignal } from '..';
 import { _is } from './utils';
 
 //

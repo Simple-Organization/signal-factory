@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { SingleSelector, store } from '../src';
+import { SingleSelector, store } from '../src/stores';
 
 //
 //

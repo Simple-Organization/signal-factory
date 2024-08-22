@@ -1,4 +1,8 @@
-import { atom, Store } from '../../src';
+import { Store } from '../../src/stores';
+import { atom } from '../experiments/atom';
+
+//
+//
 
 let type: 'atom' | 'Store' | 'AtomClass';
 

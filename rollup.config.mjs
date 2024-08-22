@@ -1,10 +1,26 @@
 import { dts } from 'rollup-plugin-dts';
 
+//
+//
+
 const config = [
-  // …
+  //
+  //  Signal fatory
+  //
+
   {
     input: './dist/types/src/index.d.ts',
     output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
+
+  //
+  //  Store
+  //
+
+  {
+    input: './dist/types/src/stores/index.d.ts',
+    output: [{ file: 'store/index.d.ts', format: 'es' }],
     plugins: [dts()],
   },
 

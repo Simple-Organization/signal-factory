@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { store } from '../src';
+import { store } from '../src/stores';
 
 //
 //

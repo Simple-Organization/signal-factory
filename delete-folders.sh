@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Defina a lista de pastas
-folders=("vue" "vanilla-atom" "angular" "solid" "preact" "vanilla-class-atom" "testing")
+folders=("vue" "store" "angular" "solid" "preact" "testing")
 
 # Verifica o sistema operacional
 if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "darwin"* ]]; then

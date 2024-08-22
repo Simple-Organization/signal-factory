@@ -1,9 +1,24 @@
 import * as esbuild from 'esbuild';
 
+//
+//  Signal fatory
+//
+
 await esbuild.build({
   entryPoints: ['./src/index.ts'],
   bundle: true,
   outdir: 'dist',
+  format: 'esm',
+});
+
+//
+//  Store
+//
+
+await esbuild.build({
+  entryPoints: ['./src/stores/index.ts'],
+  bundle: true,
+  outfile: 'store/index.js',
   format: 'esm',
 });
 

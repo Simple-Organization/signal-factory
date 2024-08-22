@@ -1,6 +1,6 @@
 {
   "name": "signal-factory",
-  "version": "1.0.0-next.4",
+  "version": "1.0.0-next.5",
   "author": "Simple Organization",
   "scripts": {
     "build": "tsc && rollup -c && node esbuild.mjs",
@@ -36,6 +36,8 @@
   "files": [
     "dist/index.d.ts",
     "dist/index.js",
+    "store/index.d.ts",
+    "store/index.js",
     "vue/index.d.ts",
     "vue/index.js",
     "solid/index.d.ts",
@@ -51,6 +53,12 @@
       "default": "./dist/index.js",
       "browser": "./dist/index.js",
       "import": "./dist/index.js"
+    },
+    "./store": {
+      "types": "./store/index.d.ts",
+      "default": "./store/index.js",
+      "browser": "./store/index.js",
+      "import": "./store/index.js"
     },
     "./vue": {
       "types": "./vue/index.d.ts",

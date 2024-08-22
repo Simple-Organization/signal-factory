@@ -32,6 +32,16 @@ export interface WritableSignal<T = any> extends ReadableSignal<T> {
   set: (value: T) => void;
 }
 
-export { store, Store } from './Store';
-export { singleSelector as selector, SingleSelector } from './SingleSelector';
-export { multiSelector, MultiSelector } from './MultiSelector';
+//
+//
+
+export let signalFactory: (initial: any) => WritableSignal<any> = () => {
+  throw new Error('Signal factory not set');
+};
+
+//
+//
+
+export function setSignalFactory(factory: (initial: any) => WritableSignal<any>) {
+  signalFactory = factory;
+}
