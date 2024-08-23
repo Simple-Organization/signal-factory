@@ -8,6 +8,11 @@ export interface TestSignal<T = any> extends WritableSignal<T> {
    * The history of the signal's values.
    */
   history: T[];
+
+  /**
+   * The number of subscribers to the signal.
+   */
+  count(): number;
 }
 
 //
