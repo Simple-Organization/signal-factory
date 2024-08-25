@@ -4,6 +4,9 @@ import { _is, Comparator } from './utils';
 //
 //
 
+/**
+ * A selector from multiple signals. Only subscribes to the signals when there is at least one subscriber.
+ */
 export class MultiSelector<T> implements ReadableSignal<T> {
   /**
    * @internal
@@ -48,6 +51,11 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   //
   //
 
+  /**
+   * Creates a new multi selector.
+   * @param getter Function that processes the values of the signals.
+   * @param is The function that compares the current value with the new value.
+   */
   constructor(
     getter: (get: <U>(signal: ReadableSignal<U>) => U) => T,
     is: Comparator = _is,
@@ -59,7 +67,11 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   //
   //
 
-  get() {
+  /**
+   * The current value of the signal/atom.
+   * @returns The current value of the signal/atom.
+   */
+  get(): T {
     if (!this._hasValue) {
       this._firstGet();
     } else if (this._cbs.size === 0) {
@@ -111,7 +123,12 @@ export class MultiSelector<T> implements ReadableSignal<T> {
   //
   //
 
-  subscribe(callback: (value: T) => void) {
+  /**
+   * Subscribes to changes in the signal/atom.
+   * @param callback - The function to call when the signal/atom's value changes.
+   * @returns A function that unsubscribes the callback from the signal/atom.
+   */
+  subscribe(callback: (value: T) => void): () => void {
     if (!this._hasValue) {
       this._firstGet();
     }

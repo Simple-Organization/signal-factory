@@ -9,6 +9,9 @@ export type SignalValue<T> = T extends ReadableSignal<infer U> ? U : never;
 //
 //
 
+/**
+ * A selector from a single signal. Only subscribes to the signal when there is at least one subscriber.
+ */
 export class SingleSelector<T extends ReadableSignal<any>, U>
   implements ReadableSignal<U>
 {
@@ -50,6 +53,12 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
   //
   //
 
+  /**
+   * Creates a new single selector.
+   * @param from The signal to select from.
+   * @param getter Function that processes the value of the signal.
+   * @param is The function that compares the current value with the new value.
+   */
   constructor(
     from: T,
     getter: (value: SignalValue<T>) => U,
@@ -60,13 +69,22 @@ export class SingleSelector<T extends ReadableSignal<any>, U>
     this._is = is;
   }
 
-  get() {
+  /**
+   * The current value of the signal/atom.
+   * @returns The current value of the signal/atom.
+   */
+  get(): U {
     if (!this._unsub) {
       return this._getter(this._from.get());
     }
     return this._value;
   }
 
+  /**
+   * Subscribes to changes in the signal/atom.
+   * @param callback - The function to call when the signal/atom's value changes.
+   * @returns A function that unsubscribes the callback from the signal/atom.
+   */
   subscribe(callback: (value: any) => void) {
     if (!this._hasValue) {
       this._value = this._getter(this._from.get());
