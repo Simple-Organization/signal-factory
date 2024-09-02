@@ -1,4 +1,4 @@
-import { Store } from '../../src/stores';
+import { Store } from '../../src';
 import { atom } from '../experiments/atom';
 
 //

@@ -1,5 +1,5 @@
 import test, { expect } from '@playwright/test';
-import { MultiSelector, store } from '../src/stores';
+import { MultiSelector, store } from '../src';
 
 //
 //
