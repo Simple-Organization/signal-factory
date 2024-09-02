@@ -1,6 +1,6 @@
 {
-  "name": "signal-factory",
-  "version": "1.0.0-next.7",
+  "name": "simorg-store",
+  "version": "1.0.0-next.0",
   "author": "Simple Organization",
   "scripts": {
     "build": "tsc && rollup -c && tsx esbuild.ts",
@@ -12,12 +12,11 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Simple-Organization/signal-factory.git"
+    "url": "https://github.com/Simple-Organization/simorg-store.git"
   },
-  "bugs": "https://github.com/Simple-Organization/signal-factory/issues",
+  "bugs": "https://github.com/Simple-Organization/simorg-store/issues",
   "license": "MIT",
   "devDependencies": {
-    "@angular/core": ">=16",
     "@playwright/test": "^1.46.0",
     "@types/benchmark": "^2.1.5",
     "benchmark": "^2.1.4",
@@ -27,25 +26,13 @@
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
     "rollup-plugin-dts": "^6.1.1",
-    "signal-factory": "*",
-    "solid-js": ">=1.8",
-    "svelte": "^4.2.18",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4",
-    "vite": "^5.4.2",
-    "vue": ">=3"
+    "vite": "^5.4.2"
   },
   "files": [
     "dist/index.d.ts",
     "dist/index.js",
-    "store/index.d.ts",
-    "store/index.js",
-    "vue/index.d.ts",
-    "vue/index.js",
-    "solid/index.d.ts",
-    "solid/index.js",
-    "angular/index.d.ts",
-    "angular/index.js",
     "preact/index.d.ts",
     "preact/index.js"
   ],
@@ -55,36 +42,6 @@
       "default": "./dist/index.js",
       "browser": "./dist/index.js",
       "import": "./dist/index.js"
-    },
-    "./store": {
-      "types": "./store/index.d.ts",
-      "default": "./store/index.js",
-      "browser": "./store/index.js",
-      "import": "./store/index.js"
-    },
-    "./vue": {
-      "types": "./vue/index.d.ts",
-      "default": "./vue/index.js",
-      "browser": "./vue/index.js",
-      "import": "./vue/index.js"
-    },
-    "./solid": {
-      "types": "./solid/index.d.ts",
-      "default": "./solid/index.js",
-      "browser": "./solid/index.js",
-      "import": "./solid/index.js"
-    },
-    "./angular": {
-      "types": "./angular/index.d.ts",
-      "default": "./angular/index.js",
-      "browser": "./angular/index.js",
-      "import": "./angular/index.js"
-    },
-    "./testing": {
-      "types": "./testing/index.d.ts",
-      "default": "./testing/index.js",
-      "browser": "./testing/index.js",
-      "import": "./testing/index.js"
     },
     "./preact": {
       "types": "./preact/index.d.ts",

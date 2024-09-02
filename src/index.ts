@@ -24,19 +24,3 @@ export interface WritableSignal<T = any> extends ReadableSignal<T> {
    */
   set: (value: T) => void;
 }
-
-//
-//
-
-export let signalFactory: <T>(initial: T) => WritableSignal<T> = () => {
-  throw new Error('Signal factory not set');
-};
-
-//
-//
-
-export function setSignalFactory(
-  factory: (initial: any) => WritableSignal<any>,
-) {
-  signalFactory = factory;
-}
