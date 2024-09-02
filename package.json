@@ -1,6 +1,6 @@
 {
   "name": "signal-factory",
-  "version": "1.0.0-next.8",
+  "version": "1.0.0-next.9",
   "author": "Simple Organization",
   "scripts": {
     "build": "tsc && rollup -c && tsx esbuild.ts",
@@ -15,7 +15,7 @@
     "url": "https://github.com/Simple-Organization/simorg-store.git"
   },
   "bugs": "https://github.com/Simple-Organization/simorg-store/issues",
-  "homepage": "https://github.com/Simple-Organization/signal-factory/tree/signal_factory_deprecated#readme",
+  "homepage": "https://github.com/Simple-Organization/simorg-store/tree/signal_factory_deprecated#readme",
   "license": "MIT",
   "devDependencies": {
     "@angular/core": ">=16",
