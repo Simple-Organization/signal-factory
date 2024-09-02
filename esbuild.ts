@@ -8,7 +8,7 @@ import { fixClassNamesPlugin } from 'esbuild-utils';
 await esbuild.build({
   entryPoints: ['./src/index.ts'],
   bundle: true,
-  outdir: 'dist',
+  outfile: 'dist/index.js',
   format: 'esm',
   plugins: [fixClassNamesPlugin()],
 });
