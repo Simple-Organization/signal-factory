@@ -12,9 +12,10 @@
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Simple-Organization/signal-factory.git"
+    "url": "https://github.com/Simple-Organization/simorg-store.git"
   },
-  "bugs": "https://github.com/Simple-Organization/signal-factory/issues",
+  "bugs": "https://github.com/Simple-Organization/simorg-store/issues",
+  "homepage": "https://github.com/Simple-Organization/signal-factory/tree/signal_factory_deprecated#readme",
   "license": "MIT",
   "devDependencies": {
     "@angular/core": ">=16",

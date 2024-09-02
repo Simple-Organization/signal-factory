@@ -2,6 +2,10 @@
 
 Depreciado por conta de bugs relacionados ao `vite`, agora a `store` que antes estava nessa `lib` é a `simorg-store`
 
+--
+
+## Descrição
+
 **signal-factory** é uma biblioteca framework agnostica usada para criar bibliotecas com `state management` que não precisam definir qual framework elas estão utilizando, ou seja, para criar outras biblitecas agnósticas
 
 Tipagem de um signal
